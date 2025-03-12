@@ -4,7 +4,7 @@ from .terminal_simulate import TerminalSimulator
 
 class Simulation:
     def __init__(self, manager: Manager):
-        self.manager = []
+        self.manager = manager
         self.sim_trains = []
         self.sim_terminals = []
 
@@ -12,4 +12,5 @@ class Simulation:
         pass
 
     def step():
+        
         pass
