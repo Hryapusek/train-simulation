@@ -1,0 +1,154 @@
+{
+  "trains": [
+    {
+      "name": "trainRP1",
+      "speed": 40,
+      "capacity": 4000,
+      "road": "Raduzhney-Polyarny",
+      "position": {
+        "destination": "Polyarny",
+        "traveled_dist": 1250
+      },
+      "volume": 4000
+    },
+    {
+      "name": "trainRP2",
+      "speed": 40,
+      "capacity": 4000,
+      "road": "Raduzhney-Polyarny",
+      "position": {
+        "destination": "Polyarny",
+        "traveled_dist": 2500
+      },
+      "volume": 0
+    },
+    {
+      "name": "trainRP3",
+      "speed": 40,
+      "capacity": 4000,
+      "road": "Raduzhney-Polyarny",
+      "position": {
+        "destination": "Polyarny",
+        "traveled_dist": 0
+      },
+      "volume": 4000
+    },
+    {
+      "name": "trainRP4",
+      "speed": 35,
+      "capacity": 6000,
+      "road": "Raduzhney-Polyarny",
+      "position": {
+        "destination": "Raduzhney",
+        "traveled_dist": 2500
+      },
+      "volume": 0
+    },
+    {
+      "name": "trainRP5",
+      "speed": 35,
+      "capacity": 6000,
+      "road": "Raduzhney-Polyarny",
+      "position": {
+        "destination": "Raduzhney",
+        "traveled_dist": 2500
+      },
+      "volume": 0
+    },
+    {
+      "name": "trainZP1",
+      "speed": 45,
+      "capacity": 5000,
+      "road": "Zvezda-Polyarny",
+      "position": {
+        "destination": "Zvezda",
+        "traveled_dist": 0
+      },
+      "volume": 0
+    },
+    {
+      "name": "trainZP2",
+      "speed": 45,
+      "capacity": 5000,
+      "road": "Zvezda-Polyarny",
+      "position": {
+        "destination": "Zvezda",
+        "traveled_dist": 0
+      },
+      "volume": 0
+    },
+    {
+      "name": "trainsFinish",
+      "speed": null,
+      "capacity": 10000,
+      "road": "Polyarny-",
+      "position": {
+        "destination": "Polyarny",
+        "traveled_dist": 0
+      },
+      "volume": 4000
+    }
+  ],
+  "terminals": [
+    {
+      "name": "Raduzhney",
+      "loading_speed_train": 200,
+      "unloading_speed_train": null,
+      "stock": 6000,
+      "stock_max": null,
+      "railways": 1,
+      "production": {
+        "replenishment": 150,
+        "deviation": 10
+      }
+    },
+    {
+      "name": "Zvezda",
+      "loading_speed_train": 250,
+      "unloading_speed_train": null,
+      "stock": 5000,
+      "stock_max": null,
+      "railways": 1,
+      "production": {
+        "replenishment": 50,
+        "deviation": 2
+      }
+    },
+    {
+      "name": "Polyarny",
+      "loading_speed_train": 300,
+      "unloading_speed_train": null,
+      "stock": 0,
+      "stock_max": 15000,
+      "railways": 3,
+      "production": {
+        "replenishment": null,
+        "deviation": null
+      }
+    }
+  ],
+  "roads": [
+    {
+      "name": "Raduzhney-Polyarny",
+      "point_from": "Raduzhney",
+      "pointy_to": "Polyarny",
+      "distance": 2500
+    },
+    {
+      "name": "Zvezda-Polyarny",
+      "point_from": "Zvezda",
+      "pointy_to": "Polyarny",
+      "distance": 4000
+    },
+    {
+      "name": "Polyarny-",
+      "point_from": "Polyarny",
+      "pointy_to": null,
+      "distance": null
+    }
+  ],
+  "other": {
+    "datetime_start": "01/11/2021 00:00:00",
+    "datetime_end": "01/12/2021 00:00:00"
+  }
+}
