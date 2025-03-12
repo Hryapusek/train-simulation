@@ -5,12 +5,13 @@ from .terminal_simulate import TerminalSimulator
 class Simulation:
     def __init__(self, manager: Manager):
         self.manager = manager
-        self.sim_trains = []
-        self.sim_terminals = []
-
-    def get_terminal(name: str) -> TerminalSimulator:
-        pass
+        self.sim_trains: list[TrainSimulator] = []
+        self.sim_terminals: list[TerminalSimulator] = []
 
     def step():
-        
+        """
+            Здесь необходимо вызывать по очереди методы step во всех
+            - Терминалах
+            - Поездах
+        """
         pass
