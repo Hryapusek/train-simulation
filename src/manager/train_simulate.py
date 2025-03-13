@@ -31,7 +31,15 @@ class TrainSimulator:
 
 
     def step(self):
-        pass
+        train_name = self.train.name
+        train_state = self.state
+        if train_state == TrainState.MOVING:
+            data = self.step_moving()
+            self.simulation.data.append(data)
+        elif train_state == TrainState.LOADING:
+            self.step_loading()
+        elif train_state == TrainState.GIVEAWAY:
+            self.step_giveaway()
 
     def step_moving(self):
         """
@@ -40,10 +48,31 @@ class TrainSimulator:
         """
         # Найти дорогу по которой мы сейчас двигаемся; 1 - traveled_dist
         # self.state = TrainState.GIVEAWAY (в  конце чекаем  волюм)
-        self.simulation.manager.roads
-        self.train.road
-        self.train.position["traveled_dist"] += ...
-        pass
+        distance = 2500 if self.train.road == "Raduzhney-Polyarny" else 4000
+        if self.train.position["traveled_dist"] > 0:
+            self.state = TrainState.MOVING
+            time_required = self.train.position["traveled_dist"] / self.train.speed
+            days = int(time_required)
+            hours = int((time_required - days) * 24)
+            minutes = int((time_required - days - hours / 24) * 1440)
+            data = {
+                "name": self.train.name,
+                "datetime": datetime.now(),
+                "time": f"{days} days, {hours} hours, {minutes} minutes",
+                "state": self.state.name,
+                "volume": self.train.volume,
+                "road": self.train.road,
+                "traveled_dist": self.train.position["traveled_dist"],
+                "destination": self.train.position["destination"]
+            }
+            if self.train.position["traveled_dist"] == distance:
+                self.state = TrainState.GIVEAWAY
+                self.step_giveaway()
+            elif self.train.position["traveled_dist"] == 0:
+                if self.train.volume == 0:
+                    self.state = TrainState.LOADING
+                    self.step_loading()
+        return data
 
     def step_loading(self):
         """

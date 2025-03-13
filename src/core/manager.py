@@ -5,6 +5,7 @@ from .terminal import Terminal
 from .train import Train
 
 
+
 class Manager:
     def __init__(self, trains, terminals, roads, other):
         self.trains: list[Train] = []
