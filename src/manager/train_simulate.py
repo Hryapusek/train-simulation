@@ -21,7 +21,9 @@ class TrainSimulator:
             return TrainState.MOVING
         elif self.train.volume > 0 and self.train.position["traveled_dist"] < 0:
             return TrainState.LOADING
-        elif self.train.volume == 0 and self.train.position["traveled_dist"] == 2500:
+        elif self.train.volume == 0 and self.train.road == "Raduzhney-Polyarny" and self.train.position["traveled_dist"] == 2500:
+            return TrainState.GIVEAWAY
+        elif self.train.volume == 0 and self.train.road == "Zvezda-Polyarny" and self.train.position["traveled_dist"] == 4000:
             return TrainState.GIVEAWAY
         elif self.train.volume == 0 and self.train.position["traveled_dist"] == 0:
             return TrainState.WAITING
