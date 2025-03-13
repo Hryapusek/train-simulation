@@ -6,10 +6,17 @@ from datetime import datetime
 
 
 class Simulation:
-    def __init__(self, manager: Manager):
+    def __init__(self, manager: Manager, start_time: datetime):
+        self.start_time = start_time
         self.manager = manager
         self.sim_trains: list[TrainSimulator] = []
         self.sim_terminals: list[TerminalSimulator] = []
+
+    def get_road_by_name(self, name: str):
+        for road in self.manager.roads:
+            if road.name == name:
+                return road
+        assert False
 
     def step(self):
     def step():

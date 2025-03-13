@@ -17,10 +17,19 @@ class TrainSimulator:
         self.state: TrainState = self.define_state()
 
     def define_state(self) -> TrainState:
-        if self.train.volume > 0 and self.train.position["traveled_dist"] > 0:
+        """
+        1. Если мы не находимся в конце дороги и не в начале - значит мы в движении
+        2. Если мы на терминале и терминал типа загрузка - проверяем заполнен ли поезд
+            - Если поезд заполнен - мы в движении
+            - Если поезд не заполнен и в терминале ЕСТЬ место - мы в состоянии загрузки
+            - Иначе мы в состоянии ожидания railways
+        3. Если мы на терминале и терминал типа выгрузка - проверяем выгружен ли поезд
+            - Если поезд выгружен - мы в движении
+            - Если поезд не выгружен и в терминале ЕСТЬ место - мы в состоянии выгрузки
+            - Иначе мы в состоянии ожидания railways
+        """
+        if self.train.volume > 0 and self.train.position["traveled_dist"] >= 0:
             return TrainState.MOVING
-        elif self.train.volume > 0 and self.train.position["traveled_dist"] < 0:
-            return TrainState.LOADING
         elif self.train.volume == 0 and self.train.road == "Raduzhney-Polyarny" and self.train.position["traveled_dist"] == 2500:
             return TrainState.GIVEAWAY
         elif self.train.volume == 0 and self.train.road == "Zvezda-Polyarny" and self.train.position["traveled_dist"] == 4000:
@@ -43,36 +52,29 @@ class TrainSimulator:
 
     def step_moving(self):
         """
-        Здесь мы двигаем поезд вперед
-        и если надо обращаемся к другим состояниям
+        Здесь мы просто двигаем поезд вперед на self.speed
+        При этом надо проверить вдруг мы приехали чтобы не выйти за пределы дороги
+
+        Если мы приехали - необходимо проверить есть ли в терминале свободное место
+        Если нету - переходим в состояние ожидания места
+        Если есть - проверяем в какой терминал приехали
+            - Если поезд пустой,
+                то переходим в состояние загрузки
+            - Иначе переходим в состояние выгрузки
         """
         # Найти дорогу по которой мы сейчас двигаемся; 1 - traveled_dist
         # self.state = TrainState.GIVEAWAY (в  конце чекаем  волюм)
-        distance = 2500 if self.train.road == "Raduzhney-Polyarny" else 4000
-        if self.train.position["traveled_dist"] > 0:
-            self.state = TrainState.MOVING
-            time_required = self.train.position["traveled_dist"] / self.train.speed
-            days = int(time_required)
-            hours = int((time_required - days) * 24)
-            minutes = int((time_required - days - hours / 24) * 1440)
-            data = {
-                "name": self.train.name,
-                "datetime": datetime.now(),
-                "time": f"{days} days, {hours} hours, {minutes} minutes",
-                "state": self.state.name,
-                "volume": self.train.volume,
-                "road": self.train.road,
-                "traveled_dist": self.train.position["traveled_dist"],
-                "destination": self.train.position["destination"]
-            }
-            if self.train.position["traveled_dist"] == distance:
-                self.state = TrainState.GIVEAWAY
-                self.step_giveaway()
-            elif self.train.position["traveled_dist"] == 0:
-                if self.train.volume == 0:
-                    self.state = TrainState.LOADING
-                    self.step_loading()
-        return data
+        # Здесь нужно подвинуть поезд но не выйти за пределы дороги
+        distance = self.simulation.get_road_by_name(self.train.road).distance
+        if self.train.position["traveled_dist"] == distance:
+            # В зависимости от терминала - переходим в состояние загрузки или разгрузки
+            self.state = TrainState.GIVEAWAY
+            self.step_giveaway()
+        elif self.train.position["traveled_dist"] == 0:
+            # Аналогично
+            if self.train.volume == 0:
+                self.state = TrainState.LOADING
+                self.step_loading()
 
     def step_loading(self):
         """

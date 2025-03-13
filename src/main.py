@@ -12,7 +12,7 @@ def read_database():
 def main():
     database = read_database()
     for train in database.trains:
-        
+        pass
 
 
 if __name__ == "__main__":
