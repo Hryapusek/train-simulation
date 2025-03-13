@@ -14,8 +14,18 @@ class TrainSimulator:
     def __init__(self, train: Train, simulation: Simulation):
         self.train = train
         self.simulation = simulation
-        # TODO: определить состояние поезда
-        self.state: TrainState = state
+        self.state: TrainState = self.define_state()
+
+    def define_state(self) -> TrainState:
+        if self.train.volume > 0 and self.train.position["traveled_dist"] > 0:
+            return TrainState.MOVING
+        elif self.train.volume > 0 and self.train.position["traveled_dist"] < 0:
+            return TrainState.LOADING
+        elif self.train.volume == 0 and self.train.position["traveled_dist"] == 2500:
+            return TrainState.GIVEAWAY
+        elif self.train.volume == 0 and self.train.position["traveled_dist"] == 0:
+            return TrainState.WAITING
+
 
 
     def step(self):
