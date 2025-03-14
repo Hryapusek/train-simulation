@@ -35,33 +35,33 @@ class TrainSimulator:
 
         # self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space
     def define_state(self) -> TrainState:
-
         if self.train.position["traveled_dist"] not in (0, 2500, 4000):
             return TrainState.MOVING
-        if self.terminal.stock_max == 0:
+        
+        if self.terminal.stock_max is None or self.terminal.stock_max == 0:  # Loading terminal
             if self.train.volume == self.train.capacity:
                 return TrainState.MOVING
-            else:
-                return TrainState.WAITING if self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space == 0 else TrainState.LOADING 
-        if self.terminal.stock_max > 0:
+            return TrainState.LOADING if self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space > 0 else TrainState.WAITING
+        
+        if self.terminal.stock_max > 0:  # Unloading terminal
             if self.train.volume == 0:
                 return TrainState.MOVING
-            else:
-                return TrainState.WAITING if self.free_space == 0 else TrainState.GIVEAWAY
+            return TrainState.GIVEAWAY if self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space > 0 else TrainState.WAITING
 
 
     def step(self) -> list[tuple[datetime, str, TrainState, int, str]]:
         train_list = []
         for train in self.simulation.trains: # здесь должны быть поезда
-            distance = # подключить roads distance
-            speed = train.speed
+           # подключить roads distance
+            distance = 0
+            speed = self.train.speed
             time_required_hours = distance / speed
             hours = int(time_required_hours)
             minutes = int((time_required_hours - hours) * 60)
             start_time = datetime(2021, 11, 1, 0, 0, 0)
             time_delta = timedelta(hours=hours, minutes=minutes) 
             end_time = start_time + time_delta
-            train_list.append((end_time, train.name, self.state, train.volume, train.position["destination"]))
+            train_list.append((end_time, self.train.name, self.state, self.train.volume, self.train.position["destination"]))
         return train_list
         # создать список по каждому поезду и отправить в step в simulation
 

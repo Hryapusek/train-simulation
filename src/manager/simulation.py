@@ -2,7 +2,7 @@ from core.manager import *
 from .train_simulate import TrainSimulator
 from .terminal_simulate import TerminalSimulator
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Simulation:
@@ -25,19 +25,19 @@ class Simulation:
         assert False
 
     def step(self):
-    def step():
-        #        end_time - берем и все переводим в час и расписывем весь путь и состояние поезда за каждый час, после 24 часов наступает новый день и все часы начинаются заново
+        for train in self.manager.trains:
+            road = self.get_road_by_name(train.road)
+            distance = road.distance
+            speed = train.speed
+            time_required_hours = distance / speed
+            hours = int(time_required_hours)
+            minutes = int((time_required_hours - hours) * 60)
+            start_time = self.start_time
+            time_delta = timedelta(hours=hours, minutes=minutes)
+            end_time = start_time + time_delta
+            time_train = (end_time, train.name)
+            print(time_train)  # or store the result as needed
 
-        distance = self.road.distance
-        speed = self.train.speed
-        time_required_hours = distance / speed
-        hours = int(time_required_hours)
-        minutes = int((time_required_hours - hours) * 60)
-        start_time = datetime(2021, 11, 1, 0, 0, 0)
-        time_delta = timedelta(hours=hours, minutes=minutes) #
-        end_time = start_time + time_delta
-        time_train = end_time, self.train.name # запись
-        return time_train
-    
-        pass
+        for simulator in self.sim_trains + self.sim_terminals:
+            simulator.step()
 
