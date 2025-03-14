@@ -18,9 +18,15 @@ class Simulation:
                 return road
         assert False
 
+    def get_terminal_by_name(self, name: str) -> TerminalSimulator:
+        for terminal in self.sim_terminals:
+            if terminal.terminal.name == name:
+                return terminal
+        assert False
+
     def step(self):
     def step():
-        #        - берем и все переводим в час и расписывем весь путь и состояние поезда за каждый час, после 24 часов наступает новый день и все часы начинаются заново
+        #        end_time - берем и все переводим в час и расписывем весь путь и состояние поезда за каждый час, после 24 часов наступает новый день и все часы начинаются заново
 
         distance = self.road.distance
         speed = self.train.speed

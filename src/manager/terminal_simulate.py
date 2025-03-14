@@ -8,11 +8,36 @@ class TerminalSimulator:
         self.terminal = terminal
         self.simulation = simulation
         self.free_space = self.terminal.railways
-        self.messages = []
+        self.messages = [] # эт че
 
     def step(self): # загрузка нефти
-        pass
+        timestamp = self.simulation.current_time
+        event = {
+            "timestamp": timestamp,
+            "terminal": self.terminal.name,
+            "stock": self.terminal.stock,
+            "production": self.terminal.production["replenishment"],
+            "unloaded": 0
+        }
+        if self.terminal.production.replenishment > 0:
+            self.terminal.stock += self.terminal.production.replenishment
+            event["unloaded"] = self.terminal.production.replenishment
+        self.messages.append(event)
 
     def take_fuel(self) -> int:
-        # сообщение о том что произошла выгрузка топлива
+        event = {
+            "timestamp": self.simulation.current_time,
+            "terminal": self.terminal.name,
+            "stock": self.terminal.stock,
+            "production": self.terminal.production["replenishment"],
+            "unloaded": 0
+        }
+        if self.terminal.production.replenishment > 0:
+            self.terminal.stock += self.terminal.production.replenishment
+            event["unloaded"] = self.terminal.production.replenishment
+        self.messages.append(event)
         return 50
+    
+    def give_fuel(self) -> int:
+        
+    

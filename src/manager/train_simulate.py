@@ -5,16 +5,18 @@ from .simulation import Simulation
 from datetime import datetime, timedelta
 
 class TrainState(Enum):
+    # Двигаемся
     MOVING = 1
     # Загружаемся
     LOADING = 2
     # Разгружаемся
     GIVEAWAY = 3
+    # Ожидаем   
     WAITING = 4
 class TrainSimulator:
     def __init__(self, train: Train, simulation: Simulation, terminal: Terminal):
         self.train = train
-        self.simulation = simulation
+        self.simulation = simulation # здесь че
         self.state: TrainState = self.define_state()
         self.terminal = terminal
 
@@ -30,32 +32,37 @@ class TrainSimulator:
             - Если поезд не выгружен и в терминале ЕСТЬ место - мы в состоянии выгрузки
             - Иначе мы в состоянии ожидания railways
         """
+
+        # self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space
     def define_state(self) -> TrainState:
+
         if self.train.position["traveled_dist"] not in (0, 2500, 4000):
             return TrainState.MOVING
         if self.terminal.stock_max == 0:
             if self.train.volume == self.train.capacity:
                 return TrainState.MOVING
             else:
-                return TrainState.WAITING if self.terminal.railways == 0 else TrainState.LOADING 
+                return TrainState.WAITING if self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space == 0 else TrainState.LOADING 
         if self.terminal.stock_max > 0:
             if self.train.volume == 0:
                 return TrainState.MOVING
             else:
-                return TrainState.WAITING if self.terminal.railways == 0 else TrainState.GIVEAWAY
+                return TrainState.WAITING if self.free_space == 0 else TrainState.GIVEAWAY
 
 
-    def step(self) -> tuple[datetime, str]:
-        distance = self.road.distance
-        speed = self.train.speed
-        time_required_hours = distance / speed
-        hours = int(time_required_hours)
-        minutes = int((time_required_hours - hours) * 60)
-        start_time = datetime(2021, 11, 1, 0, 0, 0)
-        time_delta = timedelta(hours=hours, minutes=minutes) 
-        end_time = start_time + time_delta
-        time_train = (end_time, self.train.name)
-        return time_train
+    def step(self) -> list[tuple[datetime, str, TrainState, int, str]]:
+        train_list = []
+        for train in self.simulation.trains: # здесь должны быть поезда
+            distance = # подключить roads distance
+            speed = train.speed
+            time_required_hours = distance / speed
+            hours = int(time_required_hours)
+            minutes = int((time_required_hours - hours) * 60)
+            start_time = datetime(2021, 11, 1, 0, 0, 0)
+            time_delta = timedelta(hours=hours, minutes=minutes) 
+            end_time = start_time + time_delta
+            train_list.append((end_time, train.name, self.state, train.volume, train.position["destination"]))
+        return train_list
         # создать список по каждому поезду и отправить в step в simulation
 
         # train_name = self.train.name
@@ -69,7 +76,6 @@ class TrainSimulator:
         #     self.step_giveaway()
 
     def step_moving(self):
-
         """
         Здесь мы просто двигаем поезд вперед на self.speed
         При этом надо проверить вдруг мы приехали чтобы не выйти за пределы дороги
@@ -81,13 +87,10 @@ class TrainSimulator:
                 то переходим в состояние загрузки
             - Иначе переходим в состояние выгрузки
         """
-        distance = self.simulation.get_road_by_name(self.train.road).distance
-        self.train.position["traveled_dist"] += self.train.speed
-
-        if self.train.position["traveled_dist"] >= distance:
-            self.train.position["traveled_dist"] = distance
-            terminal = next((t for t in self.simulation.manager.terminals if t.name == self.train.position["destination"]), None)
-            if terminal and terminal.railways > 0:
+        self.train.position["traveled_dist"] = min(self.train.position["traveled_dist"] + self.train.speed, self.simulation.get_road_by_name(self.train.road).distance)
+        if self.train.position["traveled_dist"] == self.simulation.get_road_by_name(self.train.road).distance:
+            terminal = self.simulation.get_terminal_by_name(self.train.position["destination"])
+            if terminal and terminal.free_space > 0:
                 if self.train.volume == 0:
                     self.state = TrainState.LOADING
                 else:
@@ -97,8 +100,8 @@ class TrainSimulator:
 
     def step_loading(self):
         # мы находимся на терминале и загружаемся - берем из терминала топливо
-        terminal = next((t for t in self.simulation.manager.terminals if t.name == self.train.position["destination"]), None)
-        if terminal and terminal.stock > 0:
+        terminal = self.simulation.get_terminal_by_name(self.train.position["destination"])
+        if terminal and self.terminal.stock > 0:
             # беру столько топлива сколько могу (не более self.capacity)
             to_load = min(self.train.capacity - self.train.volume, terminal.stock)
             self.train.volume += to_load
@@ -110,6 +113,13 @@ class TrainSimulator:
         pass
 
     def step_giveaway(self):
+         # мы находимся на терминале и загружаемся - берем из терминала топливо
+        terminal = self.simulation.get_terminal_by_name(self.train.position["destination"])
+        if terminal and terminal.stock > 0:
+            # беру столько топлива сколько могу (не более self.capacity)
+            to_load = min(self.train.capacity - self.train.volume, terminal.stock)
+            self.train.volume += to_load
+            terminal.stock -= to_load
         """
         Аналогично предыдущему, но с выгрузкой топлива; 2  - терминалы сток и выгрузка
         """
