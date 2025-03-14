@@ -36,8 +36,21 @@ class TerminalSimulator:
             self.terminal.stock += self.terminal.production.replenishment
             event["unloaded"] = self.terminal.production.replenishment
         self.messages.append(event)
-        return 50
+        return 
     
     def give_fuel(self) -> int:
-        
+        event = {
+            "timestamp": self.simulation.current_time,
+            "terminal": self.terminal.name,
+            "stock": self.terminal.stock,
+            "production": self.terminal.production["replenishment"],
+            "unloaded": 0
+        }
+        if self.terminal.stock > 0:
+            unloaded = min(self.terminal.stock, self.terminal.unloading_speed_train)
+            self.terminal.stock -= unloaded
+            event["unloaded"] = unloaded
+        self.messages.append(event)
+        return event["unloaded"]
+
     
