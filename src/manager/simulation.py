@@ -20,24 +20,18 @@ class Simulation:
 
     def step(self):
     def step():
-        """
-            Здесь необходимо вызывать по очереди методы step во всех
-            - Терминалах
-            - Поездах
-        """
-        data = {
-            "время и дата": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "Название поезда": "",
-            "Состояние поезда": "",
-            "Остаток нефти в поезде": 0,
-            "Пункт назначения поезда": "",
-            "Название терминала": "",
-            "Остаток нефти в терминале": 0,
-            "Поезд в терминале": ""
-        }
+        #        - берем и все переводим в час и расписывем весь путь и состояние поезда за каждый час, после 24 часов наступает новый день и все часы начинаются заново
 
-        for train_sim in self.sim_trains:
-            train_sim.step()
-
+        distance = self.road.distance
+        speed = self.train.speed
+        time_required_hours = distance / speed
+        hours = int(time_required_hours)
+        minutes = int((time_required_hours - hours) * 60)
+        start_time = datetime(2021, 11, 1, 0, 0, 0)
+        time_delta = timedelta(hours=hours, minutes=minutes) #
+        end_time = start_time + time_delta
+        time_train = end_time, self.train.name # запись
+        return time_train
+    
         pass
 
