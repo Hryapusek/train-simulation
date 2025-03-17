@@ -19,7 +19,7 @@ class TerminalSimulator:
             "production": self.terminal.production["replenishment"],
             "unloaded": 0
         }
-        if self.terminal.production.replenishment > 0:
+        if self.terminal.production.replenishment is not None:
             self.terminal.stock += self.terminal.production.replenishment
             event["unloaded"] = self.terminal.production.replenishment
         self.messages.append(event)
@@ -32,7 +32,7 @@ class TerminalSimulator:
             "production": self.terminal.production["replenishment"],
             "unloaded": 0
         }
-        if self.terminal.production.replenishment > 0:
+        if self.terminal.production.replenishment is not None:
             self.terminal.stock += self.terminal.production.replenishment
             event["unloaded"] = self.terminal.production.replenishment
         self.messages.append(event)
