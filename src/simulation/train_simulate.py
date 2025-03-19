@@ -1,8 +1,6 @@
 from enum import Enum
 from core.train import Train
-from core.terminal import Terminal
-from .simulation import Simulation
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class TrainState(Enum):
     # Двигаемся
@@ -14,11 +12,10 @@ class TrainState(Enum):
     # Ожидаем   
     WAITING = 4
 class TrainSimulator:
-    def __init__(self, train: Train, simulation: Simulation, terminal: Terminal):
+    def __init__(self, train: Train, s):
         self.train = train
-        self.simulation = simulation # здесь че
+        self.simulation = s
         self.state: TrainState = self.define_state()
-        self.terminal = terminal
 
 
         """
@@ -35,7 +32,9 @@ class TrainSimulator:
 
         # self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space
     def define_state(self) -> TrainState:
-        if self.train.position["traveled_dist"] not in (0, 2500, 4000):
+        train_road = self.simulation.get_road_by_name(self.train.road)
+
+        if self.train.position["traveled_dist"] != train_road.distance:
             return TrainState.MOVING
         
         if self.terminal.stock_max is None or self.terminal.stock_max == 0:  # Loading terminal
@@ -50,30 +49,17 @@ class TrainSimulator:
 
 
     def step(self) -> list[tuple[datetime, str, TrainState, int, str]]:
-        train_list = []
-        for train in self.simulation.trains: # здесь должны быть поезда
-           # подключить roads distance
-            distance = 0
-            speed = self.train.speed
-            time_required_hours = distance / speed
-            hours = int(time_required_hours)
-            minutes = int((time_required_hours - hours) * 60)
-            start_time = datetime(2021, 11, 1, 0, 0, 0)
-            time_delta = timedelta(hours=hours, minutes=minutes) 
-            end_time = start_time + time_delta
-            train_list.append((end_time, self.train.name, self.state, self.train.volume, self.train.position["destination"]))
-        return train_list
         # создать список по каждому поезду и отправить в step в simulation
 
-        # train_name = self.train.name
-        # train_state = self.state
-        # if train_state == TrainState.MOVING:
-        #     data = self.step_moving()
-        #     self.simulation.data.append(data)
-        # elif train_state == TrainState.LOADING:
-        #     self.step_loading()
-        # elif train_state == TrainState.GIVEAWAY:
-        #     self.step_giveaway()
+        train_name = self.train.name
+        train_state = self.state
+        if train_state == TrainState.MOVING:
+            data = self.step_moving()
+            self.simulation.data.append(data)
+        elif train_state == TrainState.LOADING:
+            self.step_loading()
+        elif train_state == TrainState.GIVEAWAY:
+            self.step_giveaway()
 
     def step_moving(self):
         """

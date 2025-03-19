@@ -1,5 +1,7 @@
 from __future__ import annotations
-from modules.initialize import from_json
+from datetime import timedelta
+from core.manager import Manager
+from simulation.simulation import Simulation
 import json
 
 def read_database():
@@ -7,12 +9,16 @@ def read_database():
     with open(INPUT_JSON_FILE_PATH, "r") as file:
         json_database = json.load(file)
 
-    return from_json(json_database)
+    return Manager.from_json(json_database)
 
 def main():
-    database = read_database()
-    for train in database.trains:
-        pass
+    manager: Manager = read_database()
+    simulation = Simulation(manager)
+    current_time = manager.other.datetime_start
+    while current_time < manager.other.datetime_end:
+        simulation.step()
+        current_time += timedelta(hours=1)
+
 
 
 if __name__ == "__main__":

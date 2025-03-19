@@ -7,11 +7,11 @@ from .train import Train
 
 
 class Manager:
-    def __init__(self, trains, terminals, roads, other):
-        self.trains: list[Train] = []
-        self.terminals: list[Terminal] = []
-        self.roads: list[Road] = []
-        self.other: list[Other] = []
+    def __init__(self, trains: list[Train], terminals: list[Terminal], roads: list[Road], other: Other):
+        self.trains = trains
+        self.terminals = terminals
+        self.roads = roads
+        self.other = other
 
     def from_json(json_dict: dict) -> Manager:
         trains = []
@@ -33,5 +33,3 @@ class Manager:
 
         other = Other(**json_dict.get("other", {}))
         return Manager(trains, terminals, roads, other)
-
-   

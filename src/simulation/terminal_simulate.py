@@ -1,10 +1,7 @@
-from enum import Enum
 from core.terminal import Terminal
-from core.train import Train
-from .simulation import Simulation
 
 class TerminalSimulator:
-    def __init__(self, terminal: Terminal, simulation: Simulation):
+    def __init__(self, terminal: Terminal, simulation):
         self.terminal = terminal
         self.simulation = simulation
         self.free_space = self.terminal.railways
