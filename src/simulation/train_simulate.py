@@ -29,6 +29,8 @@ class TrainSimulator:
             - Если поезд не выгружен и в терминале ЕСТЬ место - мы в состоянии выгрузки
             - Иначе мы в состоянии ожидания railways
         """
+    
+    
 
     def define_state(self) -> TrainState:
         train_road = self.simulation.get_road_by_name(self.train.road)
@@ -118,3 +120,10 @@ class TrainSimulator:
         Аналогично предыдущему, но с выгрузкой топлива; 2  - терминалы сток и выгрузка
         """
         pass
+    def reset_position_and_destination(self):
+        if self.train.position["traveled_dist"] == self.simulation.get_road_by_name(self.train.road).distance and self.train.volume == 0:
+            self.train.position["traveled_dist"] = 0
+            if self.train.position["destination"] == "Polyarny":
+                self.train.position["destination"] = "Raduzhney"
+            else:
+                self.train.position["destination"] = "Polyarny"

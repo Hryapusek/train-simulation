@@ -1,6 +1,6 @@
 from core.terminal import Terminal
 from enum import Enum
-import numpy as np
+import numpy as np #
 
 class TerminalState(Enum):
     # Загружаем в терминал
@@ -33,15 +33,14 @@ class TerminalSimulator:
             self.state = TerminalState.TAKE_FUEL
             return 0
     def take_fuel(self) -> int:
-        train_volume = self.simulation.get_train_by_volume(self.terminal.capacity).train.volume
+        name_terminal = self.simulation.get_terminal_by_name(self.train.name)
+        train_volume = self.simulation.get_train_by_volume(self.terminal.volume)
         generated_value = self.generate_normal_distribution()
         if self.terminal.stock < train_volume:
-            train_volume / generated_value
-                self.terminal.stock 
-           
-        else:
-            self.state = TerminalState.WAITING
-            return 0
+            while self.terminal.stock < train_volume or name_terminal.free_space == 0:
+                self.terminal.stock += generated_value
+                train_volume -= generated_value
+            return TerminalState.TAKE_FUEL
 
     
     
