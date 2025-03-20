@@ -12,10 +12,10 @@ class TrainState(Enum):
     # Ожидаем   
     WAITING = 4
 class TrainSimulator:
-    def __init__(self, train: Train, s):
+    def __init__(self, train: Train, simulation):
         self.train = train
-        self.simulation = s
-        self.state: TrainState = self.define_state()
+        self.simulation = simulation
+        self.state: TrainState = self.define_state() #
 
 
         """
@@ -30,24 +30,30 @@ class TrainSimulator:
             - Иначе мы в состоянии ожидания railways
         """
 
-        # self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space
     def define_state(self) -> TrainState:
         train_road = self.simulation.get_road_by_name(self.train.road)
-
-        if self.train.position["traveled_dist"] != train_road.distance:
+        name_terminal = self.simulation.get_terminal_by_name(self.train.name)
+        # MOVING
+        if self.train.position["traveled_dist"] != train_road.distance or 0:
             return TrainState.MOVING
         
-        if self.terminal.stock_max is None or self.terminal.stock_max == 0:  # Loading terminal
-            if self.train.volume == self.train.capacity:
-                return TrainState.MOVING
-            return TrainState.LOADING if self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space > 0 else TrainState.WAITING
+        if self.train.position["traveled_dist"] == 0 and self.train.volume == self.train.capacity:
+            return TrainState.MOVING
         
-        if self.terminal.stock_max > 0:  # Unloading terminal
-            if self.train.volume == 0:
-                return TrainState.MOVING
-            return TrainState.GIVEAWAY if self.simulation.get_terminal_by_name(self.train.position["destination"]).free_space > 0 else TrainState.WAITING
-
-
+        if self.train.position["traveled_dist"] == train_road.distance and self.train.volume == 0:
+            return TrainState.MOVING
+        # LOADING
+        if self.train.position["traveled_dist"]  == 0 and self.train.volume != self.train.capacity:
+            if name_terminal.free_space == 0:
+                return TrainState.LOADING
+            else:
+                return TrainState.WAITING
+        # GIVEAWAY  
+        if self.train.position["traveled_dist"] == train_road.distance and self.train.volume == self.train.capacity:
+            if name_terminal.free_space == 0:
+                return TrainState.GIVEAWAY
+            else:
+                return TrainState.WAITING
     def step(self) -> list[tuple[datetime, str, TrainState, int, str]]:
         # создать список по каждому поезду и отправить в step в simulation
 

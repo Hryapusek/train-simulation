@@ -25,3 +25,23 @@ print (go_away())
     
 
 
+______
+# 1
+#  manager 
+#   for train_json in json_dict.get("trains", []):
+#             train = Train(**train_json)
+#             trains.append(train) # 
+# 2
+# train 
+# if __name__ == "__main__": #
+#     train1 = Train(name="trainRP1", speed=40, capacity=4000, road="Raduzhney-Polyarny", volume=4000, position={"destination": "Polyarny", "traveled_dist": 1250})
+#     train2 = Train(name="trainRP2", speed=40, capacity=4000, road="Raduzhney-Polyarny", volume=0, position={"destination": "Polyarny", "traveled_dist": 2500})
+# 3
+# initilize ? 
+# 4 
+# simulatoin 
+# self.sim_terminals: list[TerminalSimulator] = [] " убираю скобки "
+# 5
+# simulation
+# self.state: TrainState = self.define_state() 
+# define_state ?
