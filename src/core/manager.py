@@ -16,12 +16,11 @@ class Manager:
     def from_json(json_dict: dict) -> Manager:
         trains = []
         terminals = []
-        roads = []
-        other = None
+        roads = []  
 
         for train_json in json_dict.get("trains", []):
             train = Train(**train_json)
-            trains.append(train)
+            trains.append(train) # 
 
         for terminal_json in json_dict.get("terminals", []):
             terminal = Terminal(**terminal_json)

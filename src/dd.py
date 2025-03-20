@@ -45,3 +45,83 @@ ______
 # simulation
 # self.state: TrainState = self.define_state() 
 # define_state ?
+# 6
+# terminal_simulatetion
+#  self.messages = [] ?
+_______
+
+class Terminal:
+    def init(self, name):
+        self.name = name
+        self.state = "idle"  # Пример состояния (можно адаптировать под свои нужды)
+    
+    def step(self, time):
+        # Логика изменения состояния терминала за время time
+        print(f"Терминал {self.name} шаг: состояние {self.state} за время {time}")
+        # Обновление состояния, например, работа терминала:
+        if self.state == "idle":
+            self.state = "working"
+        elif self.state == "working":
+            self.state = "idle"
+        else:
+            self.state = "idle"
+
+
+class Train:
+    def init(self, name, position):
+        self.name = name
+        self.position = position  # Позиция поезда в системе
+    
+    def step(self, time):
+        # Логика перемещения поезда за время time
+        print(f"Поезд {self.name} перемещается на {time} единиц времени.")
+        self.position += time  # Пример движения поезда на величину времени
+
+
+class Simulator:
+    def init(self):
+        self.terminals = []  # Список терминалов
+        self.trains = []  # Список поездов
+    
+    def add_terminal(self, terminal):
+        self.terminals.append(terminal)
+    
+    def add_train(self, train):
+        self.trains.append(train)
+    
+    def simulate_step(self, time):
+        # Сначала шаг для всех терминалов
+        for terminal in self.terminals:
+            terminal.step(time)
+        
+        # Затем шаг для всех поездов
+        for train in self.trains:
+            train.step(time)
+    
+
+# Создаем объекты
+terminal1 = Terminal("T1")
+terminal2 = Terminal("T2")
+train1 = Train("Train1", 0)
+train2 = Train("Train2", 5)
+
+# Создаем симулятор и добавляем терминалы и поезда
+simulator = Simulator()
+simulator.add_terminal(terminal1)
+simulator.add_terminal(terminal2)
+simulator.add_train(train1)
+simulator.add_train(train2)
+
+# Симулируем шаг системы за 10 единиц времени
+simulator.simulate_step(10)
+
+______________
+
+import numpy as np
+
+def generate_normal_distribution(mean=150, std_dev=10):
+    return np.random.normal(mean, std_dev)
+
+# Пример использования
+generated_value = generate_normal_distribution()
+print(generated_value)

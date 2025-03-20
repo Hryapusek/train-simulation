@@ -53,7 +53,7 @@ class TrainSimulator:
             if name_terminal.free_space == 0:
                 return TrainState.GIVEAWAY
             else:
-                return TrainState.WAITING
+                
     def step(self) -> list[tuple[datetime, str, TrainState, int, str]]:
         # создать список по каждому поезду и отправить в step в simulation
 
@@ -79,10 +79,12 @@ class TrainSimulator:
                 то переходим в состояние загрузки
             - Иначе переходим в состояние выгрузки
         """
+        name_terminal = self.simulation.get_terminal_by_name(self.train.name)
+
         self.train.position["traveled_dist"] = min(self.train.position["traveled_dist"] + self.train.speed, self.simulation.get_road_by_name(self.train.road).distance)
         if self.train.position["traveled_dist"] == self.simulation.get_road_by_name(self.train.road).distance:
             terminal = self.simulation.get_terminal_by_name(self.train.position["destination"])
-            if terminal and terminal.free_space > 0:
+            if terminal and name_terminal.free_space > 0:
                 if self.train.volume == 0:
                     self.state = TrainState.LOADING
                 else:

@@ -22,7 +22,7 @@
 - Отдать нефть
 
 
-## Cостояния поезда:
+## Cостояния поезда (define_state):
 - +Если traveled_dist не равен расстоянию дороги или 0, то это  MOVING
 - +Если traveled_dist равен 0 и Volume = capacity, то это MOVING (пополнились и выезжаем)
 - +Если traveled_dist равен расстоянию дороги и volume равен 0, то это MOVING
@@ -30,5 +30,17 @@
         Если в терминале нет места, то это WAITING
 - +Если traveled_dist равен расстоянию дороги и volume = capacity, и п.п. есть места, то это GIVEAWAY
         Если на п.п. нет места, то WAITING
+
+## Терминалы:
+(выкачивание нефти из терминала)
+GIVEAWAY
+- Смотрим на volume поезда, если stock >= volume то выгружаем в поезд - volume / loading_speed_train.
+    Если stock <, то переходим в TAKE
+
+TAKE
+- Если stock <, то volume / generated_value и заполняем 
+
+- Грузим нефть до тех пор, пока не появилсе в пункте поезд. (generated_value + generated_value) и так каждый час
+
         
          

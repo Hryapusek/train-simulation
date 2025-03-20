@@ -1,53 +1,50 @@
 from core.terminal import Terminal
+from enum import Enum
+import numpy as np
+
+class TerminalState(Enum):
+    # Загружаем в терминал
+    TAKE_FUEL = 1
+    # Выгружаем в поезд
+    GIVEAWAY_FUEL = 2
 
 class TerminalSimulator:
     def __init__(self, terminal: Terminal, simulation):
         self.terminal = terminal
         self.simulation = simulation
         self.free_space = self.terminal.railways
-        self.messages = [] # эт че
+        self.messages = [] #
+
+    def generate_normal_distribution(self):
+        mean = self.terminal.priduction['replenishment']
+        std_dev = self.terminal.priduction['deviation']
+        return np.random.normal(mean, std_dev)
+
 
     def step(self): # загрузка нефти
-        timestamp = self.simulation.current_time
-        event = {
-            "timestamp": timestamp,
-            "terminal": self.terminal.name,
-            "stock": self.terminal.stock,
-            "production": self.terminal.production["replenishment"],
-            "unloaded": 0
-        }
-        if self.terminal.production.replenishment is not None:
-            self.terminal.stock += self.terminal.production.replenishment
-            event["unloaded"] = self.terminal.production.replenishment
-        self.messages.append(event)
-
+        pass
+    def give_fuel(self, train) -> int:
+        if self.terminal.stock >= train.volume:
+            fuel_given = train.volume / self.terminal.loading_speed_train
+            train.volume = 0
+            self.terminal.stock -= fuel_given
+            return TerminalState.GIVEAWAY_FUEL
+        else:
+            self.state = TerminalState.TAKE_FUEL
+            return 0
     def take_fuel(self) -> int:
-        event = {
-            "timestamp": self.simulation.current_time,
-            "terminal": self.terminal.name,
-            "stock": self.terminal.stock,
-            "production": self.terminal.production["replenishment"],
-            "unloaded": 0
-        }
-        if self.terminal.production.replenishment is not None:
-            self.terminal.stock += self.terminal.production.replenishment
-            event["unloaded"] = self.terminal.production.replenishment
-        self.messages.append(event)
-        return 
-    
-    def give_fuel(self) -> int:
-        event = {
-            "timestamp": self.simulation.current_time,
-            "terminal": self.terminal.name,
-            "stock": self.terminal.stock,
-            "production": self.terminal.production["replenishment"],
-            "unloaded": 0
-        }
-        if self.terminal.stock > 0:
-            unloaded = min(self.terminal.stock, self.terminal.unloading_speed_train)
-            self.terminal.stock -= unloaded
-            event["unloaded"] = unloaded
-        self.messages.append(event)
-        return event["unloaded"]
+        train_volume = self.simulation.get_train_by_volume(self.terminal.capacity).train.volume
+        generated_value = self.generate_normal_distribution()
+        if self.terminal.stock < train_volume:
+            train_volume / generated_value
+                self.terminal.stock 
+           
+        else:
+            self.state = TerminalState.WAITING
+            return 0
 
+    
+    
+    
+        
     
