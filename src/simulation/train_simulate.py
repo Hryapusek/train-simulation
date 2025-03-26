@@ -1,6 +1,10 @@
+from __future__ import annotations
 from enum import Enum
 from core.train import Train
 from datetime import datetime
+
+# TODO: comment me otherwise you will get error
+from simulation.simulation import Simulation
 
 class TrainState(Enum):
     # Двигаемся
@@ -12,7 +16,7 @@ class TrainState(Enum):
     # Ожидаем   
     WAITING = 4
 class TrainSimulator:
-    def __init__(self, train: Train, simulation):
+    def __init__(self, train: Train, simulation: "Simulation"):
         self.train = train
         self.simulation = simulation
         self.state: TrainState = self.define_state() #
@@ -55,11 +59,11 @@ class TrainSimulator:
             if name_terminal.free_space == 0:
                 return TrainState.GIVEAWAY
             else:
+                pass
                 
     def step(self) -> list[tuple[datetime, str, TrainState, int, str]]:
         # создать список по каждому поезду и отправить в step в simulation
 
-        train_name = self.train.name
         train_state = self.state
         if train_state == TrainState.MOVING:
             data = self.step_moving()
@@ -97,11 +101,7 @@ class TrainSimulator:
     def step_loading(self):
         # мы находимся на терминале и загружаемся - берем из терминала топливо
         terminal = self.simulation.get_terminal_by_name(self.train.position["destination"])
-        if terminal and self.terminal.stock > 0:
-            # беру столько топлива сколько могу (не более self.capacity)
-            to_load = min(self.train.capacity - self.train.volume, terminal.stock)
-            self.train.volume += to_load
-            terminal.stock -= to_load
+        self.train.volume += terminal.give_fuel(self)
         """
         Обратиться к терминалу в котором мы сейчас находимся за топливом. 
         Необходимо проверить есть ли доступное топливо; 2 - терминалы сток и загрузка
@@ -111,15 +111,12 @@ class TrainSimulator:
     def step_giveaway(self):
          # мы находимся на терминале и загружаемся - берем из терминала топливо
         terminal = self.simulation.get_terminal_by_name(self.train.position["destination"])
-        if terminal and terminal.stock > 0:
-            # беру столько топлива сколько могу (не более self.capacity)
-            to_load = min(self.train.capacity - self.train.volume, terminal.stock)
-            self.train.volume += to_load
-            terminal.stock -= to_load
+        terminal.take_fuel(self)
         """
         Аналогично предыдущему, но с выгрузкой топлива; 2  - терминалы сток и выгрузка
         """
         pass
+
     def reset_position_and_destination(self):
         if self.train.position["traveled_dist"] == self.simulation.get_road_by_name(self.train.road).distance and self.train.volume == 0:
             self.train.position["traveled_dist"] = 0

@@ -1,4 +1,6 @@
+from .event import Event
 from core.terminal import Terminal
+from .train_simulate import TrainSimulator
 from enum import Enum
 import numpy as np #
 
@@ -13,7 +15,7 @@ class TerminalSimulator:
         self.terminal = terminal
         self.simulation = simulation
         self.free_space = self.terminal.railways
-        self.messages = [] #
+            
 
     def generate_normal_distribution(self):
         mean = self.terminal.priduction['replenishment']
@@ -23,7 +25,18 @@ class TerminalSimulator:
 
     def step(self): # загрузка нефти
         pass
+    
     def give_fuel(self, train) -> int:
+        """
+        Проверить есть ли доступная для выдачи нефть в терминале
+        Если есть - выдать нефть поезду (return какое-то количество нефти)
+        Зафиксировать событие
+        """
+        self.events.append(Event(
+            date=self.simulation.time,
+            oil_left=self.terminal.stock,
+            oil_added=train.volume
+        ))
         if self.terminal.stock >= train.volume:
             fuel_given = train.volume / self.terminal.loading_speed_train
             train.volume = 0
@@ -32,7 +45,19 @@ class TerminalSimulator:
         else:
             self.state = TerminalState.TAKE_FUEL
             return 0
-    def take_fuel(self) -> int:
+        
+    def take_fuel(self, train: TrainSimulator):
+        """
+        Проверить сколько в терминале места для нефти.
+        Если терминал полный - ничего не делаем. 
+        Выгрузить с поезда нефть в соответствии с unloading_speed_train
+        Зафиксировать событие выгрузки
+        """
+        self.events.append(Event(
+            date=self.simulation.time,
+            oil_left=self.terminal.stock,
+            oil_added=train.volume
+        ))
         name_terminal = self.simulation.get_terminal_by_name(self.train.name)
         train_volume = self.simulation.get_train_by_volume(self.terminal.volume)
         generated_value = self.generate_normal_distribution()
@@ -41,9 +66,3 @@ class TerminalSimulator:
                 self.terminal.stock += generated_value
                 train_volume -= generated_value
             return TerminalState.TAKE_FUEL
-
-    
-    
-    
-        
-    

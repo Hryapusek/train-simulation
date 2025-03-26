@@ -117,7 +117,7 @@
     {
       "name": "Polyarny",
       "loading_speed_train": 300,
-      "unloading_speed_train": null,
+      "unloading_speed_train": 200,
       "stock": 0,
       "stock_max": 15000,
       "railways": 3,
