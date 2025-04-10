@@ -1,16 +1,11 @@
 from .event import Event
 from core.terminal import Terminal
 from .train_simulate import TrainSimulator
-from enum import Enum
-import numpy as np #
+import numpy as np 
 
-class TerminalState(Enum):
-    # Загружаем в терминал
-    TAKE_FUEL = 1
-    # Выгружаем в поезд
-    GIVEAWAY_FUEL = 2
 
 class TerminalSimulator:
+
     def __init__(self, terminal: Terminal, simulation):
         self.terminal = terminal
         self.simulation = simulation

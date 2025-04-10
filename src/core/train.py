@@ -22,35 +22,31 @@ class TrainState(Enum):
     WAITING = 4
 
 class Train:
-
-    def __init__(self, name, speed, capacity, road, volume, position, simulation: Simulation):
-        self.TrainModel.name = name
-        self.TrainModel.speed = speed
-        self.TrainModel.capacity = capacity
-        self.TrainModel.road = road
-        self.TrainModel.volume = volume
-        self.TrainModel.position = {
-            "destination": position[0],
-            "traveled_dist": position[1]
-        }
+    def __init__(self, train: TrainModel, simulation: Simulation):
+        self.name = train.name
+        self.speed = train.speed
+        self.capacity = train.capacity
+        self.road = train.road
+        self.volume = train.volume
+        self.position = train.position
         self.simulation = simulation
 
     def define_state(self):
         train_road = self.simulation.get_road_by_name(self.road)
-        name_terminal = self.simulation.get_terminal_by_name(self.TrainModel.name)
-        if self.TrainModel.position["traveled_dist"] != train_road.distance or 0:
+        name_terminal = self.simulation.get_terminal_by_name(self.name)
+        if self.position["traveled_dist"] != train_road.distance:
             return TrainState.MOVING
-        if self.TrainModel.position["traveled_dist"] == 0 and self.TrainModel.volume == self.TrainModel.capacity:
+        if self.position["traveled_dist"] == 0 and self.volume == self.capacity:
             return TrainState.MOVING
-        if self.TrainModel.position["traveled_dist"] == train_road.distance and self.TrainModel.volume == 0:
+        if self.position["traveled_dist"] == train_road.distance and self.volume == 0:
             return TrainState.MOVING
-        if self.TrainModel.position["traveled_dist"]  == 0 and self.TrainModel.volume != self.TrainModel.capacity:
+        if self.position["traveled_dist"] == 0 and self.volume != self.capacity:
             if name_terminal.free_space == 0:
                 return TrainState.LOADING
             else:
                 return TrainState.WAITING
-        if self.TrainModel.position["traveled_dist"] == train_road.distance and self.TrainModel.volume == self.TrainModel.capacity:
+        if self.position["traveled_dist"] == train_road.distance and self.volume == self.capacity:
             if name_terminal.free_space == 0:
                 return TrainState.GIVEAWAY
             else:
-                pass
+                return TrainState.WAITING
