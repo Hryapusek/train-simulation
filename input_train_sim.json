@@ -131,19 +131,19 @@
     {
       "name": "Raduzhney-Polyarny",
       "point_from": "Raduzhney",
-      "pointy_to": "Polyarny",
+      "point_to": "Polyarny",
       "distance": 2500
     },
     {
       "name": "Zvezda-Polyarny",
       "point_from": "Zvezda",
-      "pointy_to": "Polyarny",
+      "point_to": "Polyarny",
       "distance": 4000
     },
     {
       "name": "Polyarny-",
       "point_from": "Polyarny",
-      "pointy_to": null,
+      "point_to": null,
       "distance": null
     }
   ],

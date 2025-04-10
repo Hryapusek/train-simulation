@@ -9,7 +9,7 @@ class Simulation:
         self.manager = manager
         self.sim_trains: list[TrainSimulator] = []
         self.sim_terminals: list[TerminalSimulator] = []
-
+        self.lfkajldsf
         for train in self.manager.trains:
             new_simulation_train = TrainSimulator(train, self)
             self.sim_trains.append(new_simulation_train)
@@ -40,17 +40,15 @@ class Simulation:
                 return train
         assert False
 
-    def simulate_step(self, time):
+    def simulate_step(self):
         # Сначала шаг для всех терминалов
         for terminal in self.sim_terminals:
-            terminal.step(time)
+            terminal.step()
         
         # Затем шаг для всех поездов
         for train in self.sim_trains:
-            train.step(time)
+            train.step()
 
-        for simulator in self.sim_terminals + self.sim_trains:
-            simulator.step(time)
         """
         Эта функция делает шаг всей системы. То есть она симулирует работу системы за указанное время.
         Симуляция состоит из поездов и терминалов. Мы должны по очереди - сначала все терминалы,

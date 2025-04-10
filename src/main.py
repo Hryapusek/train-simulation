@@ -16,7 +16,7 @@ def main():
     simulation = Simulation(manager)
     current_time = manager.other.datetime_start
     while current_time < manager.other.datetime_end:
-        simulation.step()
+        simulation.simulate_step()
         current_time += timedelta(hours=1)
 
 
