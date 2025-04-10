@@ -50,3 +50,10 @@ TAKE
 - если у поезда состояние - loading и position == Zvezda, то +1 railways в терминале Raduzney. Максимально занятых railways может быть равным из указанного числа railways
 - в п.п. может быть поезда загрузки с названием trainsFinish. Эти поезда всегда будут занимать 1 место в терминале. 
 Если у поезда состояние giveaway, то +1 railways, до тех пор пока не будет достигнут максимум railways
+
+## step train
+
+- Если состояние moving, то смотрим на speed, traveled_dist, то + speed до тех пор, пока не будет == road
+- Если состояние loading, то смотрим на capacity, terminal loading и volume += terminal loading до тех пор пока == capacity и у терминала -= это кол-во
+- Если состояние giveaway, то берем volume поезда и -= unloading_speed_train до тех пор пока == Volume и += это в терминал
+- Если состояние waiting, смотрим на distination. Если distination - Raduzney то ждем до тех пор пока не будет free_spase, переходим затем в состояние loading. Если distination - Zvezda, то ждем до тех пор пока не будет free_spase переходим затем в состояние loading. Если distination -Polyarney, то ждем до тех пор пока не будет free_spase. Затем, если название ?= trainFinish, то переходим в состояние giweaway, else: loading

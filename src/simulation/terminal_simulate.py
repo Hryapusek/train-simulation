@@ -3,6 +3,7 @@ from core.terminal import Terminal
 from .train_simulate import TrainSimulator
 from core.train import Train
 import numpy as np 
+from datetime import datetime
 
 
 class TerminalSimulator:
@@ -18,7 +19,8 @@ class TerminalSimulator:
         return np.random.normal(mean, std_dev)
 
 
-    def step(self): 
+    def step(self):
+        
         pass
     
     def give_fuel(self, train) -> int:
@@ -71,7 +73,7 @@ class TerminalSimulator:
         for train in self.simulation.manager.trains:
             state = train.define_state()
             self.trains.append({'name': train.name, 'state': state})
-        with open('train.Train', 'r') as file:
+        with open('train.Train', 'r') as file: # 
             for line in file:
                 name, state = line.strip().split(',')
                 self.trains.append({'name': name, 'state': Train[state]})
@@ -88,7 +90,7 @@ class TerminalSimulator:
                 self.free_space += 1
             else:   
                 while self.free_space <= self.simulation.get_terminal_by_name("Polyarny").railways:
-                    self.free_space += 1
+                    self.free_space += 1 
             
                  
 

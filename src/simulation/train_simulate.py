@@ -12,7 +12,7 @@ class TrainSimulator:
         self.state = state
         self.train.position 
 
-    def step(self):
+    def step(self, p):
         # создать список по каждому поезду и отправить в step в simulation
         train_state = self.state
         if train_state == TrainState.MOVING:

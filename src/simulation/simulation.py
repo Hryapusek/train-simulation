@@ -48,6 +48,12 @@ class Simulation:
         # Затем шаг для всех поездов
         for train in self.sim_trains:
             train.step()
+            if train.name == "fdfdfd":
+                print(train.volume, train.cur_distance)
+
+    def run(self):
+        for p in range(N_period):
+            self.simulate_step(p)
 
         """
         Эта функция делает шаг всей системы. То есть она симулирует работу системы за указанное время.
