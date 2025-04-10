@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
+from core.train import Train 
 
 class TerminalModel(BaseModel):
 
@@ -19,10 +20,16 @@ class TerminalState(Enum):
 
 
 class Terminal:
-    
+
     def __init__(self, terminal: TerminalModel) -> None:
         self.name = terminal.name    
         self.stock = terminal.stock
         self.railways = terminal.railways    
         self.loading_speed_train = terminal.loading_speed_train    
         self.unloading_speed_train = terminal.unloading_speed_train
+
+    def define_terminal_state(self, train: Train) -> TerminalState:
+        if self.stock >= train.capacity and self.railways == 0:
+            return TerminalState.TAKE_FUEL
+        else:
+            return TerminalState.GIVEAWAY_FUEL
