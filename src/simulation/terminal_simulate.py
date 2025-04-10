@@ -1,6 +1,7 @@
 from .event import Event
 from core.terminal import Terminal
 from .train_simulate import TrainSimulator
+from core.train import Train
 import numpy as np 
 
 
@@ -41,6 +42,7 @@ class TerminalSimulator:
             return 0
         
     def take_fuel(self, train: TrainSimulator):
+
         """
         Проверить сколько в терминале места для нефти.
         Если терминал полный - ничего не делаем. 
@@ -65,4 +67,28 @@ class TerminalSimulator:
             return events_oil_added
         
     def calculate_free_space(self):
-        pass
+        self.trains = []
+        for train in self.simulation.manager.trains:
+            state = train.define_state()
+            self.trains.append({'name': train.name, 'state': state})
+        with open('train.Train', 'r') as file:
+            for line in file:
+                name, state = line.strip().split(',')
+                self.trains.append({'name': name, 'state': Train[state]})
+        for train in self.trains:
+            if train['state'] == Train.LOADING and train['position[destination]'] == 'Raduzhney':
+                while self.free_space != self.simulation.get_terminal_by_name('Raduzhney').railways:
+                    self.free_space += 1
+        for train in self.trains:
+            if train['state'] == Train.LOADING and train['position[destination]'] == 'Zvezda':
+                while self.free_space != self.simulation.get_terminal_by_name('Zvezda').railways:
+                    self.free_space += 1
+        for train in self.trains:
+            if train['state'] == Train.GIVEAWAY and train['name'] == "trainsFinish":
+                self.free_space += 1
+            else:   
+                while self.free_space <= self.simulation.get_terminal_by_name("Polyarny").railways:
+                    self.free_space += 1
+            
+                 
+

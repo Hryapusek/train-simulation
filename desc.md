@@ -43,4 +43,10 @@ TAKE
 - Грузим нефть до тех пор, пока не появилсе в пункте поезд. (generated_value + generated_value) и так каждый час
 
         
-         
+## calculate_free_space
+- создать список поездов и их state
+- прогнать список через range
+- если у поезда состояние - loading и position == Raduzney, то +1 railways в терминале Raduzney. Максимально занятых railways может быть равным из указанного числа railways
+- если у поезда состояние - loading и position == Zvezda, то +1 railways в терминале Raduzney. Максимально занятых railways может быть равным из указанного числа railways
+- в п.п. может быть поезда загрузки с названием trainsFinish. Эти поезда всегда будут занимать 1 место в терминале. 
+Если у поезда состояние giveaway, то +1 railways, до тех пор пока не будет достигнут максимум railways

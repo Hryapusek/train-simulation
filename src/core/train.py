@@ -34,6 +34,7 @@ class Train:
     def define_state(self):
         train_road = self.simulation.get_road_by_name(self.road)
         name_terminal = self.simulation.get_terminal_by_name(self.name)
+
         if self.position["traveled_dist"] != train_road.distance:
             return TrainState.MOVING
         if self.position["traveled_dist"] == 0 and self.volume == self.capacity:
