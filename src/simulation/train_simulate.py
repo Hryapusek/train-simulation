@@ -24,6 +24,7 @@ class TrainSimulator:
             self.step_giveaway()
 
     def step_moving(self):
+
         """
         Здесь мы просто двигаем поезд вперед на self.speed
         При этом надо проверить вдруг мы приехали чтобы не выйти за пределы дороги
@@ -35,8 +36,8 @@ class TrainSimulator:
                 то переходим в состояние загрузки
             - Иначе переходим в состояние выгрузки
         """
-        name_terminal = self.simulation.get_terminal_by_name(self.train.name)
 
+        name_terminal = self.simulation.get_terminal_by_name(self.train.name)
         self.train.position["traveled_dist"] = min(self.train.position["traveled_dist"] + self.train.speed, self.simulation.get_road_by_name(self.train.road).distance)
         if self.train.position["traveled_dist"] == self.simulation.get_road_by_name(self.train.road).distance:
             terminal = self.simulation.get_terminal_by_name(self.train.position["destination"])
@@ -52,6 +53,7 @@ class TrainSimulator:
         # мы находимся на терминале и загружаемся - берем из терминала топливо
         terminal = self.simulation.get_terminal_by_name(self.train.position["destination"])
         self.train.volume += terminal.give_fuel(self)
+
         """
         Обратиться к терминалу в котором мы сейчас находимся за топливом. 
         Необходимо проверить есть ли доступное топливо; 2 - терминалы сток и загрузка
