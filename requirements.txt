@@ -1,2 +1,5 @@
 pydantic
 numpy
+pandas
+tabulate
+openpyxl

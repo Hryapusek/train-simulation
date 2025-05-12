@@ -1,65 +1,119 @@
-from core.manager import *
-from .train_simulate import TrainSimulator
-from .terminal_simulate import TerminalSimulator
-from datetime import timedelta
+from data.database import *
+from .train_simulator import TrainSimulator
+from .station_simulator import StationSimulator
+from .station_simulator import TerminalSimulator
+from .station_simulator import TransferPointSimulator
+from .station_simulator import TransferPointState
+from .station_simulator import TerminalState
+from .train_simulator import StationType
+from datetime import timedelta, datetime
 
 
 class Simulation:
-    def __init__(self, manager: Manager):
-        self.manager = manager
-        self.sim_trains: list[TrainSimulator] = []
-        self.sim_terminals: list[TerminalSimulator] = []
-        self.lfkajldsf
-        for train in self.manager.trains:
-            new_simulation_train = TrainSimulator(train, self)
-            self.sim_trains.append(new_simulation_train)
+    def __init__(self, database: Database):
+        self.database = database
 
-        for terminal in self.manager.terminals:
-            new_simulation_terminal = TerminalSimulator(terminal, self)
-            self.sim_terminals.append(new_simulation_terminal)
-        # Пройтись фором по всем поездам из manager 
-        # и на основе их создать объекты TrainSimulator
-        # и сложить их в список self.sim_trains
+        self.transfer_point_simulators: list[TransferPointSimulator] = []
+        self.terminal_simulators: list[TerminalSimulator] = []
 
+        self.train_simulators: list[TrainSimulator] = []
+        
+        self.current_time = None
+        
+        self.terminal_logs = []
+        self.transfer_logs = []
 
-    def get_terminal_by_name(self, name: str) -> TerminalSimulator:
-        for terminal in self.sim_terminals:
-            if terminal.terminal.name == name:
-                return terminal
+        for station in self.database.stations:
+            if station.name == "Polyarny":                 # HARDCODING
+                station.total_functional_tracks -= 1       # ONE TRACK IS ALWAYS RESERVED FOR THE GHOST TRAIN
+                new_transfer_point_simulator = TransferPointSimulator(station, self)
+                self.transfer_point_simulators.append(new_transfer_point_simulator)
+            else:
+                new_terminal_simulator = TerminalSimulator(station, self)
+                self.terminal_simulators.append(new_terminal_simulator)
+
+        for train in self.database.trains:
+            if train.name == "trainsFinish":                # Ghost train handled
+                transfer_point: TransferPointSimulator = self.transfer_point_simulators[0]
+                transfer_point.initialize_ghost_train(train.volume, train.capacity)
+                continue                                    # Dont save it as a train, since only a simulation of cargo operation is required
+            new_train_simulator = TrainSimulator(train, self)
+            self.train_simulators.append(new_train_simulator)
+
+    def get_station_with_type(self, name: str) -> tuple[object, str] | None:
+        station: StationSimulator
+        for station in self.transfer_point_simulators + self.terminal_simulators:
+            if station.data.name == name:
+                station_type = (
+                    StationType.TRANSFER_POINT
+                    if isinstance(station, TransferPointSimulator)
+                    else StationType.TERMINAL
+                )
+                return station, station_type
         assert False
 
-    def get_road_by_name(self, name: str) -> Road:
-        for road in self.manager.roads:
+    def get_route_by_name(self, name: str) -> RouteData:
+        for road in self.database.routes:
             if road.name == name:
                 return road
         assert False
-    # добавила для сравнения volume и stock
-    def get_train_by_volume(self, volume: int) -> TrainSimulator:
-        for train in self.sim_trains:
-            if train.train.volume == volume:
-                return train
-        assert False
 
     def simulate_step(self):
-        # Сначала шаг для всех терминалов
-        for terminal in self.sim_terminals:
+
+        # шаг для всех поездов
+        for train in self.train_simulators:
+            train.simulate_step()
+
+        '''#  шаг для всех терминалов
+        # for station in self.transfer_point_simulators + self.terminal_simulators:
+        #     station.step()
+        #     self.logs.append(self._collect_station_log(station))
+            # print("===================")
+            # print("Station name: " + station.data.name)
+            # print(station.data.stock)
+            # print(*station.tracks_status)
+            # print("===================")
+            # print()
+            # print()
+            
+            # Step and log terminals'''
+        
+        # Step and log terminals
+        for terminal in self.terminal_simulators:
             terminal.step()
+            self.terminal_logs.append(self._log_terminal(terminal))
+
+
+
+        # Step and log transfer points
+        for tp in self.transfer_point_simulators:
+            tp.step()
+            self.transfer_logs.append(self._log_transfer_point(tp))
+    
+    def _log_terminal(self, terminal: TerminalSimulator):
+        return {
+            "datetime": self.current_time.strftime("%d-%m-%Y %H:%M:%S"),
+            "station_type": "terminal",
+            "station_name": terminal.data.name,
+            "stock": terminal.data.stock,
+            "extraction_amount": terminal.last_production_result if terminal.state == TerminalState.ACCUMULATING else None,
+            "train_on_track": terminal.tracks_status[0].data.name + " | " + str(terminal.tracks_status[0].data.volume) if (len(terminal.tracks_status) > 0 and isinstance(terminal.tracks_status[0], TrainSimulator)) else None,
+            "amount_loaded": terminal.data.loading_speed if terminal.state == TerminalState.DISTRIBUTING else None,
+        }
+
+    def _log_transfer_point(self, tp: TransferPointSimulator):
+        return {
+            "datetime": self.current_time.strftime("%d-%m-%Y %H:%M:%S"),
+            "station_type": "transfer_point",
+            "station_name": tp.data.name,
+            "stock": tp.data.stock,
+            "amount_loaded": tp.data.loading_speed if tp.state == TransferPointState.DISTRIBUTING else None,
+            "train_on_reserved_track": "trainsFinish" if tp.state == TransferPointState.DISTRIBUTING else None,                            
+            "train_on_track_1": tp.tracks_status[0].data.name + " | " + str(tp.tracks_status[0].data.volume) if (len(tp.tracks_status) > 0 and isinstance(tp.tracks_status[0], TrainSimulator)) else None,
+            "train_on_track_2": tp.tracks_status[1].data.name + " | " + str(tp.tracks_status[1].data.volume) if (len(tp.tracks_status) > 1 and isinstance(tp.tracks_status[1], TrainSimulator)) else None,
+            "amount_unloaded": tp.data.unloading_speed if tp.state == TransferPointState.ACCUMULATING else None,
+        }
+
+
+
         
-        # Затем шаг для всех поездов
-        for train in self.sim_trains:
-            train.step()
-            if train.name == "fdfdfd":
-                print(train.volume, train.cur_distance)
-
-    def run(self):
-        for p in range(N_period):
-            self.simulate_step(p)
-
-        """
-        Эта функция делает шаг всей системы. То есть она симулирует работу системы за указанное время.
-        Симуляция состоит из поездов и терминалов. Мы должны по очереди - сначала все терминалы,
-        потом все поезда подвинуть на указанное время вперед. Мы договорились что во всех них есть функция step()
-        которая делает в объекте действия за указанное время.
-        """
-        
-

@@ -1,9 +1,9 @@
 from . import simulation
-from . import terminal_simulate
-from . import train_simulate
+from . import station_simulator
+from . import train_simulator
 
 __all__ = [
     "simulation",
-    "terminal_simulate",
-    "train_simulate"
+    "station_simulator",
+    "train_simulator"
 ]

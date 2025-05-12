@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
-class Other(BaseModel):
+
+class OtherData(BaseModel):
     datetime_start: str
     datetime_end: str
     

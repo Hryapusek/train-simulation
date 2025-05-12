@@ -1,2 +1,12 @@
 __pycache__
 penv
+*.pyc
+.venv/
+.env/
+
+/output/
+*.xlsx
+*.csv
+
+.vscode/
+.idea/
