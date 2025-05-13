@@ -133,7 +133,7 @@ class TrainSimulator:
             station.redefine_state()
             return TrainState.UNLOADING
 
-        assert False       
+        raise AssertionError("This should be unreachable")
             
     def redefine_state(self):
         state = self.state  # Faster local access

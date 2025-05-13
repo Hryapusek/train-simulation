@@ -1,9 +1,12 @@
 from datetime import datetime, timedelta  # Добавляем datetime для работы с датами
-from data.database import Database
-from simulation.simulation import Simulation
+
 import json
 import pandas as pd
+
+from data.database import Database
+from simulation.simulation import Simulation
 from config import config
+from export_report import export_to_excel
 
 
 def read_database() -> Database:
@@ -19,11 +22,20 @@ def main():
     
     current_time = config.get_config().datetime_start
     end_time = config.get_config().datetime_end
-    
+    total_duration = (end_time - config.get_config().datetime_start).total_seconds()
+
     while current_time < end_time:  
         simulation.current_time = current_time 
         simulation.simulate_step()
         current_time += timedelta(hours=1)
+
+        elapsed_duration = (current_time - config.get_config().datetime_start).total_seconds()
+        progress_percent = (elapsed_duration / total_duration) * 100
+        print(" " * 50, end='\r', flush=True)
+        arrow = '-' * int(progress_percent // 2) + ' ' * int(50 - progress_percent // 2)
+        print(f"Simulation progress: [{arrow}] {progress_percent:.2f}%", end='\r', flush=True)
+    print()
+
 
     # Handle terminals
     terminals_df = pd.DataFrame(simulation.terminal_logs)
@@ -66,3 +78,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    export_to_excel()
+    

@@ -52,7 +52,7 @@ class Simulation:
             if road.name == name:
                 return road
         assert False
-
+    
     def simulate_step(self):
         # шаг для всех поездов
         for train in self.train_simulators:
@@ -62,14 +62,13 @@ class Simulation:
 
         # Step and log terminals
         for terminal in self.terminal_simulators:
-            terminal.step()
+            terminal.simulate_step()
             self.terminal_logs.append(self._log_terminal(terminal))
 
         # Step and log transfer points
         for tp in self.transfer_point_simulators:
-            tp.step()
+            tp.simulate_step()
             self.transfer_logs.append(self._log_transfer_point(tp))
-            print(self._log_transfer_point(tp))
     
     def _log_terminal(self, terminal: TerminalSimulator):
         return {
@@ -89,8 +88,8 @@ class Simulation:
             "station_type": "transfer_point",
             "station_name": tp.data.name,
             "stock": tp.data.stock,
-            "amount_loaded": tp.data.loading_speed if tp.state == TransferPointState.DISTRIBUTING else None,
-            "train_on_reserved_track": "trainsFinish" if tp.state == TransferPointState.DISTRIBUTING else None,                            
+            "amount_loaded": tp.last_loaded if tp.state == TransferPointState.DISTRIBUTING else None,
+            "train_on_reserved_track": "departureTrain" if tp.state == TransferPointState.DISTRIBUTING else None,                            
             "train_on_track_1": tp.tracks_status[0].data.name + " | " + str(tp.tracks_status[0].data.volume) if (len(tp.tracks_status) > 0 and isinstance(tp.tracks_status[0], TrainSimulator)) else None,
             "train_on_track_2": tp.tracks_status[1].data.name + " | " + str(tp.tracks_status[1].data.volume) if (len(tp.tracks_status) > 1 and isinstance(tp.tracks_status[1], TrainSimulator)) else None,
             "amount_unloaded": tp.count_trains_on_tracks() * tp.data.unloading_speed if tp.state == TransferPointState.ACCUMULATING else None,

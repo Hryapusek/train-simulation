@@ -30,7 +30,7 @@ class StationSimulator(ABC):
         self.trains_queue: list[TrainSimulator] = []
 
     @abstractmethod
-    def step(self):
+    def simulate_step(self):
         pass
     
     @abstractmethod
@@ -40,11 +40,6 @@ class StationSimulator(ABC):
     @abstractmethod
     def redefine_state(self):
         pass
-
-    # TODO:
-    # @abstractmethod
-    # def stock():
-    #     pass
 
     def add_train_to_queue(self, train: TrainSimulator):
         self.trains_queue.append(train)
@@ -70,6 +65,7 @@ class TransferPointSimulator(StationSimulator):
         StationSimulator.__init__(self, data.total_functional_tracks, simulation)
         # One is always reserved for ghost train
         self.state = TransferPointState.IDLE
+        self.last_loaded: int = None
 
     def redefine_state(self):
         if self.state == TransferPointState.DISTRIBUTING:
@@ -100,7 +96,7 @@ class TransferPointSimulator(StationSimulator):
         train_to_process.state = TrainState.UNLOADING
         train_to_process.delayed_step = True
 
-    def step(self):
+    def simulate_step(self):
         if self.state == TransferPointState.ACCUMULATING:
             if self.data.stock >= self.data.departure_train_capacity:
                 self.state = TransferPointState.DISTRIBUTING
@@ -114,6 +110,7 @@ class TransferPointSimulator(StationSimulator):
             else:
                 amount_to_load = left_to_load
 
+            self.last_loaded = amount_to_load
             self.data.stock -= amount_to_load
             self.data.departure_train_volume += amount_to_load
 
@@ -167,7 +164,7 @@ class TerminalSimulator(StationSimulator):
         else:
             self.state = TerminalState.ACCUMULATING
 
-    def step(self):
+    def simulate_step(self):
         if self.state == TerminalState.ACCUMULATING:
             self.data.stock += self.generate_normal_distribution()
 
