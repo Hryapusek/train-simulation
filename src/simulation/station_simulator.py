@@ -47,7 +47,9 @@ class StationSimulator:
     def count_available_tracks(self):
         """Returns the number of available (empty) tracks."""
         return self.tracks_status.count(None)
-
+    
+    def count_trains_on_tracks(self):
+        return len([t for t in self.tracks_status if isinstance(t, TrainSimulator)])
 
 class TransferPointSimulator(StationSimulator):
     def __init__(self, station_data, simulation):
@@ -111,7 +113,25 @@ class TransferPointSimulator(StationSimulator):
 
             if self.ghost_train_data["volume"] == self.ghost_train_data["capacity"]:
                 self.state = TransferPointState.IDLE
+                self.ghost_train_data["volume"] = 0 #reset the ghost train
 
+
+
+
+
+
+      # if self.count_trains_on_tracks() > 0:
+        #     self.state = TransferPointState.ACCUMULATING    
+        # else:
+        #     self.state = TransferPointState.IDLE
+        
+        
+        
+    # if self.state == TerminalState.ACCUMULATING:
+        #     return      #accumulating will turn itself off when it finishes in the step() -> check_queue()
+        
+        # if self.count_trains_on_tracks() > 0:
+        #     self.state = TerminalState.DISTRIBUTING
 
 
 

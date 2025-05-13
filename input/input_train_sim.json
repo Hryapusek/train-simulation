@@ -17,8 +17,8 @@
       "capacity": 4000,
       "road": "Raduzhney-Polyarny",
       "position": {
-        "destination": "Polyarny",
-        "traveled_dist": 2500
+        "destination": "Raduzhney",
+        "traveled_dist": 0
       },
       "volume": 0
     },
@@ -29,7 +29,7 @@
       "road": "Raduzhney-Polyarny",
       "position": {
         "destination": "Polyarny",
-        "traveled_dist": 2500
+        "traveled_dist": 2500 
       },
       "volume": 4000
     },
@@ -39,8 +39,8 @@
       "capacity": 6000,
       "road": "Raduzhney-Polyarny",
       "position": {
-        "destination": "Polyarny",
-        "traveled_dist": 0
+        "destination": "Raduzhney",
+        "traveled_dist": 2500
       },
       "volume": 0
     },
@@ -50,8 +50,8 @@
       "capacity": 6000,
       "road": "Raduzhney-Polyarny",
       "position": {
-        "destination": "Polyarny",
-        "traveled_dist": 0
+        "destination": "Raduzhney",
+        "traveled_dist": 2500
       },
       "volume": 0
     },
@@ -61,8 +61,8 @@
       "capacity": 5000,
       "road": "Zvezda-Polyarny",
       "position": {
-        "destination": "Polyarny",
-        "traveled_dist": 0
+        "destination": "Zvezda",
+        "traveled_dist": 4000
       },
       "volume": 0
     },
@@ -72,8 +72,8 @@
       "capacity": 5000,
       "road": "Zvezda-Polyarny",
       "position": {
-        "destination": "Polyarny",
-        "traveled_dist": 0
+        "destination": "Zvezda",
+        "traveled_dist": 4000
       },
       "volume": 0
     },

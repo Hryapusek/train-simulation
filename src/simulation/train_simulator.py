@@ -160,6 +160,10 @@ class TrainSimulator:
             station.add_train_to_queue(self)
             return TrainState.IN_QUEUE
 
+        if station.trains_queue:    #even if there are available tracks, there is another train in queue waiting for when enough oil is accumulated
+            station.add_train_to_queue(self)
+            return TrainState.IN_QUEUE      #FIFO
+        
         if station_type == StationType.TERMINAL:
             if station.data.stock >= self.data.capacity:
                 station.add_train_to_track(self)

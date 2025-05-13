@@ -21,12 +21,12 @@ def export_to_excel():
 
         if station_type == "Terminal":
             selected = df[[
-                "datetime", "stock", "extraction_amount", "train_on_track", "amount_loaded"
+                "datetime", "stock", "extraction_amount", "train_on_track", "amount_loaded", "trains_queue"
             ]]
         else:
             selected = df[[
                 "datetime", "stock", "amount_loaded", "train_on_reserved_track",
-                "train_on_track_1", "train_on_track_2", "amount_unloaded"
+                "train_on_track_1", "train_on_track_2", "amount_unloaded", "trains_queue"
             ]]
 
         ws = wb.create_sheet(title=f"{station_type} - {station_name}"[:31])

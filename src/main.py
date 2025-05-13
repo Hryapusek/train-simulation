@@ -41,7 +41,7 @@ def main():
         file_path = OUTPUT_DIR / f"terminal_{safe_name}_log.csv"
 
         group_df = group_df[[
-            "datetime", "stock", "extraction_amount", "train_on_track", "amount_loaded"
+            "datetime", "stock", "extraction_amount", "train_on_track", "amount_loaded", "trains_queue"
         ]]
 
         # Round all float columns to 2 decimal places
@@ -57,7 +57,7 @@ def main():
 
         group_df = group_df[[
             "datetime", "stock", "amount_loaded", "train_on_reserved_track",
-            "train_on_track_1", "train_on_track_2", "amount_unloaded"
+            "train_on_track_1", "train_on_track_2", "amount_unloaded", "trains_queue"
         ]]
 
         # Round all float columns to 2 decimal places
