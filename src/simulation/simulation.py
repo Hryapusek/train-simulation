@@ -53,8 +53,7 @@ class Simulation:
                 return road
         assert False
 
-    def step(self):
-
+    def simulate_step(self):
         # шаг для всех поездов
         for train in self.train_simulators:
             train.simulate_step()
@@ -68,7 +67,7 @@ class Simulation:
         for tp in self.transfer_point_simulators:
             tp.step()
             self.transfer_logs.append(self._log_transfer_point(tp))
-            # print(self._log_transfer_point(tp))
+            print(self._log_transfer_point(tp))
     
     def _log_terminal(self, terminal: TerminalSimulator):
         return {

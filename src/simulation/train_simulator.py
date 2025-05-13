@@ -38,6 +38,8 @@ class TrainSimulator:
         self.direction = self.define_direction()
         self.state = self.define_initial_state()
 
+        # self.made_move_in_tick = False
+
     
     def __repr__(self):
         return f"TrainSimulator(train_data={self.data.name}, direction={self.direction}, state={self.state})"

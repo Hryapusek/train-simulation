@@ -22,7 +22,7 @@ def main():
     
     while current_time < end_time:  
         simulation.current_time = current_time 
-        simulation.step()
+        simulation.simulate_step()
         current_time += timedelta(hours=1)
 
     # Handle terminals
