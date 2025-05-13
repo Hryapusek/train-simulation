@@ -1,11 +1,15 @@
+from abc import ABC, abstractmethod
+
+import numpy as np
+from datetime import datetime
+from enum import Enum, auto
+
 from data.station_data import StationData
 from .train_simulator import TrainSimulator
 from .train_simulator import TrainState
 from .train_simulator import StationType
 from data.train_data import TrainData
-import numpy as np
-from datetime import datetime
-from enum import Enum, auto
+
 
 
 class TransferPointState(Enum):
@@ -18,20 +22,22 @@ class TerminalState(Enum):
     ACCUMULATING = auto()  # GETTING      Mining oil
     DISTRIBUTING = auto()  # GIVING       Loading a train
 
-
-class StationSimulator:
+class StationSimulator(ABC):
     def __init__(self, station_data: StationData, simulation):
         self.data = station_data
         self.parent_simulation = simulation
         self.tracks_status: list[TrainSimulator | None] = [None] * self.data.total_functional_tracks
         self.trains_queue: list[TrainSimulator] = []
 
+    @abstractmethod
     def step(self):
         pass
-
-    def on_train_left(self):
+    
+    @abstractmethod
+    def on_train_left(self, train):
         pass
     
+    @abstractmethod
     def redefine_state(self):
         pass
 
@@ -53,7 +59,7 @@ class StationSimulator:
 
 class TransferPointSimulator(StationSimulator):
     def __init__(self, station_data, simulation):
-        super().__init__(station_data, simulation)
+        StationSimulator.__init__(self, station_data, simulation)
 
         self.ghost_train_data = {}
         self.state = TransferPointState.IDLE
@@ -141,7 +147,7 @@ class TransferPointSimulator(StationSimulator):
 
 class TerminalSimulator(StationSimulator):
     def __init__(self, station_data, simulation):
-        super().__init__(station_data, simulation)
+        StationSimulator.__init__(self, station_data, simulation)
         self.state = TerminalState.ACCUMULATING
         
         self.last_production_result = None # FOR LOGS

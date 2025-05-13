@@ -58,7 +58,7 @@ class Simulation:
                 return road
         assert False
 
-    def simulate_step(self):
+    def step(self):
 
         # шаг для всех поездов
         for train in self.train_simulators:
