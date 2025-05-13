@@ -64,12 +64,11 @@ class Simulation:
             terminal.step()
             self.terminal_logs.append(self._log_terminal(terminal))
 
-
-
         # Step and log transfer points
         for tp in self.transfer_point_simulators:
             tp.step()
             self.transfer_logs.append(self._log_transfer_point(tp))
+            # print(self._log_transfer_point(tp))
     
     def _log_terminal(self, terminal: TerminalSimulator):
         return {
@@ -80,7 +79,7 @@ class Simulation:
             "extraction_amount": terminal.last_production_result if terminal.state == TerminalState.ACCUMULATING else None,
             "train_on_track": terminal.tracks_status[0].data.name + " | " + str(terminal.tracks_status[0].data.volume) if (len(terminal.tracks_status) > 0 and isinstance(terminal.tracks_status[0], TrainSimulator)) else None,
             "amount_loaded": terminal.count_trains_on_tracks() * terminal.data.loading_speed if terminal.state == TerminalState.DISTRIBUTING else None,
-            "trains_queue": ", ".join(train.data.name for train in terminal.trains_queue) if terminal.trains_queue else "—"
+            "trains_queue": " ".join(train.data.name for train in terminal.trains_queue) if terminal.trains_queue else "—"
         }
 
     def _log_transfer_point(self, tp: TransferPointSimulator):
@@ -94,5 +93,6 @@ class Simulation:
             "train_on_track_1": tp.tracks_status[0].data.name + " | " + str(tp.tracks_status[0].data.volume) if (len(tp.tracks_status) > 0 and isinstance(tp.tracks_status[0], TrainSimulator)) else None,
             "train_on_track_2": tp.tracks_status[1].data.name + " | " + str(tp.tracks_status[1].data.volume) if (len(tp.tracks_status) > 1 and isinstance(tp.tracks_status[1], TrainSimulator)) else None,
             "amount_unloaded": tp.count_trains_on_tracks() * tp.data.unloading_speed if tp.state == TransferPointState.ACCUMULATING else None,
-            "trains_queue": ", ".join(train.data.name for train in tp.trains_queue) if tp.trains_queue else "—"
+            "trains_queue": " ".join(train.data.name for train in tp.trains_queue) if tp.trains_queue else "—",
+            "track_status": ' '.join([str(t) for t in tp.tracks_status])
         }

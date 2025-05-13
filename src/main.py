@@ -48,7 +48,7 @@ def main():
 
         group_df = group_df[[
             "datetime", "stock", "amount_loaded", "train_on_reserved_track",
-            "train_on_track_1", "train_on_track_2", "amount_unloaded", "trains_queue"
+            "train_on_track_1", "train_on_track_2", "amount_unloaded", "trains_queue", "track_status"
         ]]
 
         # Round all float columns to 2 decimal places

@@ -41,6 +41,11 @@ class StationSimulator(ABC):
     def redefine_state(self):
         pass
 
+    # TODO:
+    # @abstractmethod
+    # def stock():
+    #     pass
+
     def add_train_to_queue(self, train: TrainSimulator):
         self.trains_queue.append(train)
 
@@ -60,10 +65,11 @@ class StationSimulator(ABC):
     
 class TransferPointSimulator(StationSimulator):
     def __init__(self, data: TransferPointData, simulation):
-        StationSimulator.__init__(self, data.total_functional_tracks, simulation)
         self.data = data
+        self.data.total_functional_tracks -= 1
+        StationSimulator.__init__(self, data.total_functional_tracks, simulation)
+        # One is always reserved for ghost train
         self.state = TransferPointState.IDLE
-
 
     def redefine_state(self):
         if self.state == TransferPointState.DISTRIBUTING:
@@ -94,19 +100,15 @@ class TransferPointSimulator(StationSimulator):
         train_to_process.state = TrainState.UNLOADING
 
     def step(self):
-        if (
-            self.data.stock >= self.data.departure_train_capacity
-        ):
-            self.state = TransferPointState.DISTRIBUTING
+        if self.state == TransferPointState.ACCUMULATING:
+            if self.data.stock >= self.data.departure_train_capacity:
+                self.state = TransferPointState.DISTRIBUTING
+                return
 
         if self.state == TransferPointState.DISTRIBUTING:
-            left_to_load = (
-                self.data.departure_train_capacity - self.data.departure_train_volume
-            )
+            left_to_load = self.data.departure_train_capacity - self.data.departure_train_volume
 
-            if (
-                left_to_load >= self.data.loading_speed
-            ): 
+            if left_to_load >= self.data.loading_speed: 
                 amount_to_load = self.data.loading_speed
             else:
                 amount_to_load = left_to_load
@@ -115,26 +117,9 @@ class TransferPointSimulator(StationSimulator):
             self.data.departure_train_volume += amount_to_load
 
             if self.data.departure_train_volume == self.data.departure_train_capacity:
-                self.state = TransferPointState.IDLE
+                self.state = TransferPointState.ACCUMULATING
                 self.data.departure_train_volume = 0 #reset the ghost train
 
-
-
-
-
-
-      # if self.count_trains_on_tracks() > 0:
-        #     self.state = TransferPointState.ACCUMULATING    
-        # else:
-        #     self.state = TransferPointState.IDLE
-        
-        
-        
-    # if self.state == TerminalState.ACCUMULATING:
-        #     return      #accumulating will turn itself off when it finishes in the step() -> check_queue()
-        
-        # if self.count_trains_on_tracks() > 0:
-        #     self.state = TerminalState.DISTRIBUTING
 
 class TerminalSimulator(StationSimulator):
     def __init__(self, data: TerminalData, simulation):
@@ -187,3 +172,16 @@ class TerminalSimulator(StationSimulator):
 
             self.check_queue()
    
+
+      # if self.count_trains_on_tracks() > 0:
+        #     self.state = TransferPointState.ACCUMULATING    
+        # else:
+        #     self.state = TransferPointState.IDLE
+        
+        
+        
+    # if self.state == TerminalState.ACCUMULATING:
+        #     return      #accumulating will turn itself off when it finishes in the step() -> check_queue()
+        
+        # if self.count_trains_on_tracks() > 0:
+        #     self.state = TerminalState.DISTRIBUTING

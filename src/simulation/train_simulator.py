@@ -38,6 +38,13 @@ class TrainSimulator:
         self.direction = self.define_direction()
         self.state = self.define_initial_state()
 
+    
+    def __repr__(self):
+        return f"TrainSimulator(train_data={self.data.name}, direction={self.direction}, state={self.state})"
+    
+    def __str__(self):
+        return f"TrainSimulator(train_data={self.data.name}, direction={self.direction}, state={self.state})"
+
     def get_route_endpoints(self): 
         station_a, station_type_a = self.parent_simulation.get_station_with_type(
             self.route.departure_station_name
@@ -194,7 +201,6 @@ class TrainSimulator:
             self.toggle_direction()
             return TrainState.MOVING
         return TrainState.UNLOADING
-    
     
     
     def step_moving(self):
