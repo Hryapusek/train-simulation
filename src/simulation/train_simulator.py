@@ -38,7 +38,7 @@ class TrainSimulator:
         self.direction = self.define_direction()
         self.state = self.define_initial_state()
 
-        # self.made_move_in_tick = False
+        self.delayed_step = False
 
     
     def __repr__(self):

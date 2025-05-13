@@ -56,7 +56,9 @@ class Simulation:
     def simulate_step(self):
         # шаг для всех поездов
         for train in self.train_simulators:
-            train.simulate_step()
+            if not train.delayed_step:
+                train.simulate_step()
+            train.delayed_step = False
 
         # Step and log terminals
         for terminal in self.terminal_simulators:

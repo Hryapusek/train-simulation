@@ -98,6 +98,7 @@ class TransferPointSimulator(StationSimulator):
         self.add_train_to_track(train_to_process)
         self.state = TransferPointState.ACCUMULATING
         train_to_process.state = TrainState.UNLOADING
+        train_to_process.delayed_step = True
 
     def step(self):
         if self.state == TransferPointState.ACCUMULATING:
