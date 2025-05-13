@@ -29,7 +29,7 @@
       "road": "Raduzhney-Polyarny",
       "position": {
         "destination": "Polyarny",
-        "traveled_dist": 2500 
+        "traveled_dist": 2500
       },
       "volume": 4000
     },
@@ -76,57 +76,40 @@
         "traveled_dist": 4000
       },
       "volume": 0
-    },
-    {
-      "name": "trainsFinish",
-      "speed": null,
-      "capacity": 10000,
-      "road": "Polyarny-",
-      "position": {
-        "destination": null,
-        "traveled_dist": 0
+    }
+  ],
+  "stations": {
+    "terminals": [
+      {
+        "name": "Raduzhney",
+        "loading_speed": 200,
+        "stock": 6000,
+        "total_functional_tracks": 1,
+        "production_mean": 150,
+        "production_deviation": 10
       },
-      "volume": 4000
-    }
-  ],
-  "terminals": [
-    {
-      "name": "Raduzhney",
-      "loading_speed_train": 200,
-      "unloading_speed_train": null,
-      "stock": 6000,
-      "stock_max": null,
-      "railways": 1,
-      "production": {
-        "replenishment": 150,
-        "deviation": 10
+      {
+        "name": "Zvezda",
+        "loading_speed": 250,
+        "stock": 5000,
+        "total_functional_tracks": 1,
+        "production_mean": 50,
+        "production_deviation": 2
       }
-    },
-    {
-      "name": "Zvezda",
-      "loading_speed_train": 250,
-      "unloading_speed_train": null,
-      "stock": 5000,
-      "stock_max": null,
-      "railways": 1,
-      "production": {
-        "replenishment": 50,
-        "deviation": 2
+    ],
+    "transfer_points": [
+      {
+        "name": "Polyarny",
+        "loading_speed": 300,
+        "unloading_speed": 200,
+        "stock": 0,
+        "stock_max": 15000,
+        "total_functional_tracks": 3,
+        "departure_train_capacity": 10000,
+        "departure_train_volume": 4000
       }
-    },
-    {
-      "name": "Polyarny",
-      "loading_speed_train": 300,
-      "unloading_speed_train": 200,
-      "stock": 0,
-      "stock_max": 15000,
-      "railways": 3,
-      "production": {
-        "replenishment": null,
-        "deviation": null
-      }
-    }
-  ],
+    ]
+  },
   "roads": [
     {
       "name": "Raduzhney-Polyarny",

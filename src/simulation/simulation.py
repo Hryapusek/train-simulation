@@ -23,20 +23,15 @@ class Simulation:
         self.terminal_logs = []
         self.transfer_logs = []
 
-        for station in self.database.stations:
-            if station.name == "Polyarny":                 # HARDCODING
-                station.total_functional_tracks -= 1       # ONE TRACK IS ALWAYS RESERVED FOR THE GHOST TRAIN
-                new_transfer_point_simulator = TransferPointSimulator(station, self)
-                self.transfer_point_simulators.append(new_transfer_point_simulator)
-            else:
-                new_terminal_simulator = TerminalSimulator(station, self)
-                self.terminal_simulators.append(new_terminal_simulator)
+        for transfer_point in self.database.transfer_points:
+            new_transfer_point_simulator = TransferPointSimulator(transfer_point, self)
+            self.transfer_point_simulators.append(new_transfer_point_simulator)
 
-        for train in self.database.trains:
-            if train.name == "trainsFinish":                # Ghost train handled
-                transfer_point: TransferPointSimulator = self.transfer_point_simulators[0]
-                transfer_point.initialize_ghost_train(train.volume, train.capacity)
-                continue                                    # Dont save it as a train, since only a simulation of cargo operation is required
+        for terminal in self.database.terminals:
+            new_terminal_simulator = TerminalSimulator(terminal, self)
+            self.terminal_simulators.append(new_terminal_simulator)
+            
+        for train in self.database.trains:                               
             new_train_simulator = TrainSimulator(train, self)
             self.train_simulators.append(new_train_simulator)
 
@@ -64,20 +59,6 @@ class Simulation:
         for train in self.train_simulators:
             train.simulate_step()
 
-        '''#  шаг для всех терминалов
-        # for station in self.transfer_point_simulators + self.terminal_simulators:
-        #     station.step()
-        #     self.logs.append(self._collect_station_log(station))
-            # print("===================")
-            # print("Station name: " + station.data.name)
-            # print(station.data.stock)
-            # print(*station.tracks_status)
-            # print("===================")
-            # print()
-            # print()
-            
-            # Step and log terminals'''
-        
         # Step and log terminals
         for terminal in self.terminal_simulators:
             terminal.step()
@@ -115,7 +96,3 @@ class Simulation:
             "amount_unloaded": tp.count_trains_on_tracks() * tp.data.unloading_speed if tp.state == TransferPointState.ACCUMULATING else None,
             "trains_queue": ", ".join(train.data.name for train in tp.trains_queue) if tp.trains_queue else "—"
         }
-
-
-
-        

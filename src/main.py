@@ -1,14 +1,13 @@
-from __future__ import annotations
 from datetime import datetime, timedelta  # Добавляем datetime для работы с датами
 from data.database import Database
 from simulation.simulation import Simulation
 import json
 import pandas as pd
-from config import *
+from config import config
 
 
 def read_database() -> Database:
-    with open(get_config().input_file_path, "r") as file:
+    with open(config.get_config().input_file_path, "r") as file:
         json_database = json.load(file)
 
     return Database.build_from_json(json_database)
@@ -18,8 +17,8 @@ def main():
     database = read_database()
     simulation = Simulation(database)
     
-    current_time = database.other.datetime_start
-    end_time = database.other.datetime_end
+    current_time = config.get_config().datetime_start
+    end_time = config.get_config().datetime_end
     
     while current_time < end_time:  
         simulation.current_time = current_time 
@@ -30,7 +29,7 @@ def main():
     terminals_df = pd.DataFrame(simulation.terminal_logs)
     for station_name, group_df in terminals_df.groupby("station_name"):
         safe_name = station_name.replace(" ", "_").lower()
-        file_path = get_config().output_dir / f"terminal_{safe_name}_log.csv"
+        file_path = config.get_config().output_dir / f"terminal_{safe_name}_log.csv"
 
         group_df = group_df[[
             "datetime", "stock", "extraction_amount", "train_on_track", "amount_loaded", "trains_queue"
@@ -45,7 +44,7 @@ def main():
     transfer_df = pd.DataFrame(simulation.transfer_logs)
     for station_name, group_df in transfer_df.groupby("station_name"):
         safe_name = station_name.replace(" ", "_").lower()
-        file_path = get_config().output_dir / f"transfer_point_{safe_name}_log.csv"
+        file_path = config.get_config().output_dir / f"transfer_point_{safe_name}_log.csv"
 
         group_df = group_df[[
             "datetime", "stock", "amount_loaded", "train_on_reserved_track",

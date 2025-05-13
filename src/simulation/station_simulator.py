@@ -4,12 +4,13 @@ import numpy as np
 from datetime import datetime
 from enum import Enum, auto
 
-from data.station_data import StationData
+from data.terminal_data import TerminalData
+from data.transfer_point_data import TransferPointData
+
 from .train_simulator import TrainSimulator
 from .train_simulator import TrainState
 from .train_simulator import StationType
 from data.train_data import TrainData
-
 
 
 class TransferPointState(Enum):
@@ -23,10 +24,9 @@ class TerminalState(Enum):
     DISTRIBUTING = auto()  # GIVING       Loading a train
 
 class StationSimulator(ABC):
-    def __init__(self, station_data: StationData, simulation):
-        self.data = station_data
+    def __init__(self, total_functional_tracks: int, simulation: int):
         self.parent_simulation = simulation
-        self.tracks_status: list[TrainSimulator | None] = [None] * self.data.total_functional_tracks
+        self.tracks_status: list[TrainSimulator | None] = [None] * total_functional_tracks
         self.trains_queue: list[TrainSimulator] = []
 
     @abstractmethod
@@ -56,17 +56,14 @@ class StationSimulator(ABC):
     
     def count_trains_on_tracks(self):
         return len([t for t in self.tracks_status if isinstance(t, TrainSimulator)])
-
+    
+    
 class TransferPointSimulator(StationSimulator):
-    def __init__(self, station_data, simulation):
-        StationSimulator.__init__(self, station_data, simulation)
-
-        self.ghost_train_data = {}
+    def __init__(self, data: TransferPointData, simulation):
+        StationSimulator.__init__(self, data.total_functional_tracks, simulation)
+        self.data = data
         self.state = TransferPointState.IDLE
 
-    def initialize_ghost_train(self, volume, capacity):
-        self.ghost_train_data["volume"] = volume
-        self.ghost_train_data["capacity"] = capacity
 
     def redefine_state(self):
         if self.state == TransferPointState.DISTRIBUTING:
@@ -98,13 +95,13 @@ class TransferPointSimulator(StationSimulator):
 
     def step(self):
         if (
-            self.data.stock >= self.ghost_train_data["capacity"]
+            self.data.stock >= self.data.departure_train_capacity
         ):
             self.state = TransferPointState.DISTRIBUTING
 
         if self.state == TransferPointState.DISTRIBUTING:
             left_to_load = (
-                self.ghost_train_data["capacity"] - self.ghost_train_data["volume"]
+                self.data.departure_train_capacity - self.data.departure_train_volume
             )
 
             if (
@@ -115,11 +112,11 @@ class TransferPointSimulator(StationSimulator):
                 amount_to_load = left_to_load
 
             self.data.stock -= amount_to_load
-            self.ghost_train_data["volume"] += amount_to_load
+            self.data.departure_train_volume += amount_to_load
 
-            if self.ghost_train_data["volume"] == self.ghost_train_data["capacity"]:
+            if self.data.departure_train_volume == self.data.departure_train_capacity:
                 self.state = TransferPointState.IDLE
-                self.ghost_train_data["volume"] = 0 #reset the ghost train
+                self.data.departure_train_volume = 0 #reset the ghost train
 
 
 
@@ -139,25 +136,16 @@ class TransferPointSimulator(StationSimulator):
         # if self.count_trains_on_tracks() > 0:
         #     self.state = TerminalState.DISTRIBUTING
 
-
-
-
-
-
-
 class TerminalSimulator(StationSimulator):
-    def __init__(self, station_data, simulation):
-        StationSimulator.__init__(self, station_data, simulation)
+    def __init__(self, data: TerminalData, simulation):
+        StationSimulator.__init__(self, data.total_functional_tracks, simulation)
+        self.data = data
         self.state = TerminalState.ACCUMULATING
-        
         self.last_production_result = None # FOR LOGS
         
     def generate_normal_distribution(self):
-        mean = self.data.production["replenishment"]
-        std_dev = self.data.production["deviation"]
-        result =  np.random.normal(mean, std_dev)
-        self.last_production_result = result
-        return result
+        self.last_production_result = np.random.normal(self.data.production_mean, self.data.production_deviation)
+        return self.last_production_result
     
     def give_fuel(self, train) -> int:
         amount_to_give = self.data.loading_speed
