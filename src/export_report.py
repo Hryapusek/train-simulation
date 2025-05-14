@@ -4,16 +4,15 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl import Workbook
 from openpyxl.styles import Font
 
-ROOT_DIR = Path(__file__).parent.parent
-OUTPUT_DIR = ROOT_DIR / "output"
-EXCEL_OUTPUT_PATH = OUTPUT_DIR / "station_logs.xlsx"
-
-def export_to_excel():
+def export_to_excel(excel_file_path, output_dir: Path):
     wb = Workbook()
     wb.remove(wb.active)
 
+    if not output_dir.exists():
+        output_dir.mkdir()
+
     # Find all CSV files
-    for csv_file in OUTPUT_DIR.glob("*.csv"):
+    for csv_file in output_dir.glob("*.csv"):
         station_type = "Terminal" if "terminal" in csv_file.name else "Transfer"
         station_name = csv_file.stem.replace("terminal_", "").replace("transfer_point_", "").replace("_log", "").replace("_", " ").title()
 
@@ -41,8 +40,8 @@ def export_to_excel():
             max_len = max(len(str(cell.value)) if cell.value else 0 for cell in col)
             ws.column_dimensions[col[0].column_letter].width = max_len + 2
 
-    wb.save(EXCEL_OUTPUT_PATH)
-    print(f"✔ Excel report saved to: {EXCEL_OUTPUT_PATH}")
+    wb.save(excel_file_path)
+    print(f"✔ Excel report saved to: {excel_file_path}")
 
 if __name__ == "__main__":
     export_to_excel()

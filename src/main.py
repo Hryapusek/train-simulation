@@ -20,6 +20,9 @@ def main():
     database = read_database()
     simulation = Simulation(database)
     
+    if not config.get_config().output_dir.exists():
+        config.get_config().output_dir.mkdir()
+
     current_time = config.get_config().datetime_start
     end_time = config.get_config().datetime_end
     total_duration = (end_time - config.get_config().datetime_start).total_seconds()
@@ -78,5 +81,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    export_to_excel()
+    export_to_excel(config.get_config().output_dir / "report.xlsx", config.get_config().output_dir)
     
