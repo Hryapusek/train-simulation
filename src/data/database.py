@@ -1,5 +1,4 @@
 from __future__ import annotations
-from .other_data import OtherData
 from .route_data import RouteData
 from .terminal_data import TerminalData
 from .transfer_point_data import TransferPointData
