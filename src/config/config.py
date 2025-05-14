@@ -15,8 +15,8 @@ class Config:
         with open(file_path, "r") as file:
             config = json.load(file)
         
-        result.input_file_path = Path(config["input_file_path"])
-        result.output_dir = Path(config["output_dir"])
+        result.input_file_path = Path(config["input_file"])
+        result.output_dir = Path(config["output"])
         result.datetime_start = datetime.strptime(config["datetime_start"], "%d.%m.%Y %H:%M:%S")
         result.datetime_end = datetime.strptime(config["datetime_end"], "%d.%m.%Y %H:%M:%S")
         

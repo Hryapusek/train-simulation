@@ -93,6 +93,5 @@ class Simulation:
             "train_on_track_1": tp.tracks_status[0].data.name + " | " + str(tp.tracks_status[0].data.volume) if (len(tp.tracks_status) > 0 and isinstance(tp.tracks_status[0], TrainSimulator)) else None,
             "train_on_track_2": tp.tracks_status[1].data.name + " | " + str(tp.tracks_status[1].data.volume) if (len(tp.tracks_status) > 1 and isinstance(tp.tracks_status[1], TrainSimulator)) else None,
             "amount_unloaded": tp.count_trains_on_tracks() * tp.data.unloading_speed if tp.state == TransferPointState.ACCUMULATING else None,
-            "trains_queue": " ".join(train.data.name for train in tp.trains_queue) if tp.trains_queue else "—",
-            "track_status": ' '.join([str(t) for t in tp.tracks_status])
+            "trains_queue": " ".join(train.data.name for train in tp.trains_queue) if tp.trains_queue else "—"
         }

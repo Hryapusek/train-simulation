@@ -1,6 +1,6 @@
 {
-    "input_file_path": "input/input_train_sim.json",
-    "output_dir": "output",
+    "input_file": "input/input_train_sim.json",
+    "output": "output",
     "datetime_start": "01.11.2021 00:00:00",
     "datetime_end": "01.12.2021 00:00:00"
 }

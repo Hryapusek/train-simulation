@@ -228,7 +228,7 @@ class TrainSimulator:
         self.state = self.redefine_state()
         pass
 
-    def step_waiting(self):
+    def step_in_queue(self):
         # час ниче не делаем и никаких изменений в систему не вносим
         self.state = self.redefine_state()
         pass
@@ -237,7 +237,7 @@ class TrainSimulator:
         train_state = self.state
 
         if train_state == TrainState.IN_QUEUE:
-            self.step_waiting()
+            self.step_in_queue()
 
         elif train_state == TrainState.MOVING:
             self.step_moving()

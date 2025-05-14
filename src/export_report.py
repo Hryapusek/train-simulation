@@ -25,7 +25,7 @@ def export_to_excel(excel_file_path, output_dir: Path):
         else:
             selected = df[[
                 "datetime", "stock", "amount_loaded", "train_on_reserved_track",
-                "train_on_track_1", "train_on_track_2", "amount_unloaded", "trains_queue", "track_status"
+                "train_on_track_1", "train_on_track_2", "amount_unloaded", "trains_queue"
             ]]
 
         ws = wb.create_sheet(title=f"{station_type} - {station_name}"[:31])

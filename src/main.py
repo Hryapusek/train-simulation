@@ -63,7 +63,7 @@ def main():
 
         group_df = group_df[[
             "datetime", "stock", "amount_loaded", "train_on_reserved_track",
-            "train_on_track_1", "train_on_track_2", "amount_unloaded", "trains_queue", "track_status"
+            "train_on_track_1", "train_on_track_2", "amount_unloaded", "trains_queue"
         ]]
 
         # Round all float columns to 2 decimal places
@@ -80,6 +80,7 @@ def main():
     # print(transfer_df.to_markdown(tablefmt="grid"))""" 
 
 if __name__ == "__main__":
+    print("\n\n")
     main()
     export_to_excel(config.get_config().output_dir / "report.xlsx", config.get_config().output_dir)
     

@@ -129,9 +129,5 @@
       "point_to": null,
       "distance": null
     }
-  ],
-  "other": {
-    "datetime_start": "2021-11-01 00:00:00",
-    "datetime_end": "2021-12-01 00:00:00"
-  }
+  ]
 }

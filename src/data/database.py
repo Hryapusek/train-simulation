@@ -28,7 +28,6 @@ class Database:
         for train_json in json_dict.get("trains", []):
             position = train_json.pop("position", {})
             # Inject nested values into the top-level dictionary
-            # TODO: uberi govno
             train_json["target_station_name"] = position.get("destination")
             train_json["distance_travelled"] = position.get("traveled_dist")
 
